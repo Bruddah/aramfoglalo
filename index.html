@@ -9,103 +9,242 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#efe8d8; --paper:#fffaf0; --ink:#1c2a44; --muted:#5d6779; --line:#d6ccb6; --sea:#e3dac4;
-  --accent:#b8612a; --ok:#2f7a55; --bad:#b23a3a;
-  --p0:#c8423a; --p1:#2c6db5; --p2:#c8961a; --free:#f7f1e3;
-  --shadow:0 1px 2px rgba(28,42,68,.06),0 10px 30px rgba(28,42,68,.10);
+  --bg:#eef1f7; --bg2:#e3e8f2; --panel:#ffffff; --panel2:#f5f7fb; --line:#d9e0ec; --ink:#14203a; --muted:#5f6b85;
+  --accent:#d9822b; --ok:#16a06b; --ok-soft:rgba(22,160,107,.12); --bad:#d64545; --bad-soft:rgba(214,69,69,.10);
+  --p0:#e0434a; --p1:#1f7ae0; --p2:#e09400; --hexfree:#d7dfec; --hexline:#eef1f7; --hexink:#3a4763;
+  --shadow:0 1px 2px rgba(20,32,58,.06),0 12px 32px rgba(20,32,58,.10);
+  --glow:rgba(255,255,255,.0);
   --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace; --disp:"Bricolage Grotesque",system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f141d; --paper:#171f2c; --ink:#e9e4d8; --muted:#9aa3b3; --line:#2a3445; --sea:#131a26;
-  --accent:#e08a4f; --ok:#5fbf8c; --bad:#e57373; --p0:#e2625a; --p1:#4f8fd6; --p2:#dcae3a; --free:#222c3c;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);
+  --bg:#0a1020; --bg2:#0f1830; --panel:#121c33; --panel2:#18243f; --line:#23314f; --ink:#e9eef8; --muted:#8e9bb7;
+  --accent:#ffb44d; --ok:#3ddc97; --ok-soft:rgba(61,220,151,.13); --bad:#ff6b6b; --bad-soft:rgba(255,107,107,.12);
+  --p0:#ff5a60; --p1:#3d9bff; --p2:#ffb020; --hexfree:#1c2946; --hexline:#0a1020; --hexink:#a9b6d3;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 40px rgba(0,0,0,.45);
 }}
 :root[data-theme="dark"]{
-  --bg:#0f141d; --paper:#171f2c; --ink:#e9e4d8; --muted:#9aa3b3; --line:#2a3445; --sea:#131a26;
-  --accent:#e08a4f; --ok:#5fbf8c; --bad:#e57373; --p0:#e2625a; --p1:#4f8fd6; --p2:#dcae3a; --free:#222c3c;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);
+  --bg:#0a1020; --bg2:#0f1830; --panel:#121c33; --panel2:#18243f; --line:#23314f; --ink:#e9eef8; --muted:#8e9bb7;
+  --accent:#ffb44d; --ok:#3ddc97; --ok-soft:rgba(61,220,151,.13); --bad:#ff6b6b; --bad-soft:rgba(255,107,107,.12);
+  --p0:#ff5a60; --p1:#3d9bff; --p2:#ffb020; --hexfree:#1c2946; --hexline:#0a1020; --hexink:#a9b6d3;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 40px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
-button{font:inherit;color:inherit}
-.wrap{max-width:980px;margin:0 auto;padding:20px 16px 40px}
-h1{font:800 clamp(30px,6vw,46px)/1 var(--disp);margin:0;letter-spacing:-.02em}
-h1 span{color:var(--accent)}
-.sub{color:var(--muted);margin:8px 0 0}
-.btn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer}
-.btn:hover{border-color:var(--ink)}
-.btn.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+body{background:radial-gradient(1200px 600px at 15% -10%,color-mix(in srgb,var(--p1) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 100% 0%,color-mix(in srgb,var(--p0) 10%,transparent),transparent 60%),var(--bg);
+  color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 40px}
+.logo{font:800 clamp(30px,6vw,52px)/1 var(--disp);letter-spacing:-.025em;margin:0}
+.logo span{color:var(--accent)}
+.sub{color:var(--muted);margin:10px 0 0;max-width:60ch}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:11px 18px;font-weight:600;cursor:pointer;transition:transform .08s,border-color .15s}
+.btn:hover{border-color:var(--ink)} .btn:active{transform:translateY(1px)}
+.btn.pri{background:var(--accent);color:#1a1205;border-color:transparent}
+.btn.pri:hover{filter:brightness(1.07)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-.btn:focus-visible,.opt:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-input[type=text],input[type=number]{font:600 17px var(--sans);padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);width:100%}
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px}
-.home{display:grid;gap:16px;margin-top:22px;grid-template-columns:1fr 1fr}
-.home .panel h2{font:700 20px var(--disp);margin:0 0 6px}
-.home .panel p{color:var(--muted);margin:0 0 14px;font-size:14.5px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inp{font:600 17px var(--sans);padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--ink);width:100%}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px}
+.lbl{font:600 11.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:600}
-.rules{margin-top:16px;font-size:14.5px;color:var(--muted)}
-.rules b{color:var(--ink)}
-.err{color:var(--bad);font-size:14px;margin-top:8px;min-height:1em}
-.code{font:700 40px/1 var(--mono);letter-spacing:.18em;color:var(--accent)}
-.plist{list-style:none;padding:0;margin:12px 0}
-.plist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
-.dot{width:14px;height:14px;border-radius:50%;flex:none}
-/* game */
-.top{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.pc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden}
-.pc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
-.pc.cur{box-shadow:0 0 0 2px var(--c)}
-.pc.dead{opacity:.45}
-.pc .nm{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pc .sc{font:700 22px/1.1 var(--disp)}
-.pc .meta{font:500 11.5px var(--mono);color:var(--muted)}
-.status{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:4px 0 10px}
-.status .ph{font:700 18px var(--disp)}
-.cd{font:700 20px var(--mono);min-width:3ch;text-align:right;color:var(--accent)}
-.cd.low{color:var(--bad)}
-.gamegrid{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;align-items:start}
-.mapbox{background:var(--sea);border:1px solid var(--line);border-radius:16px;padding:10px}
-svg.map{width:100%;height:auto;display:block}
-.hex{stroke:var(--bg);stroke-width:3;transition:fill .3s}
-.hex.click{cursor:pointer}
-.hex.click:hover{filter:brightness(1.12)}
-.hl{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:7 5;pointer-events:none}
-.pend{fill:none;stroke-width:4;stroke-dasharray:6 4;pointer-events:none}
-.target{fill:none;stroke:var(--bad);stroke-width:5;pointer-events:none}
-.tl{font:600 11px var(--sans);text-anchor:middle;pointer-events:none;fill:var(--ink)}
-.tv{font:700 13px var(--mono);text-anchor:middle;pointer-events:none;fill:var(--ink)}
-.owned .tl,.owned .tv{fill:#fff}
-.q{font:600 clamp(18px,2.6vw,21px)/1.35 var(--disp);margin:0 0 12px}
-.tagl{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-.opts{display:grid;gap:8px}
-.opt{display:flex;gap:10px;align-items:center;text-align:left;border:0;border-radius:11px;padding:11px 13px;min-height:52px;cursor:pointer;color:#fff;font-weight:600;font-size:15px;line-height:1.3;box-shadow:0 3px 0 rgba(0,0,0,.18)}
-.opt .sh{flex:none;width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.22);display:grid;place-items:center;font:600 13px var(--mono)}
-.o0{background:#c0392b}.o1{background:#2563a8}.o2{background:#b7860b}.o3{background:#2f7a55}
+.note{font-size:14px;color:var(--muted)}
+.err{color:var(--bad);font-size:14px;margin-top:10px;min-height:1.2em}
+/* avatars */
+.av{--c:var(--p0);display:inline-grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);color:#fff;font:700 13px/1 var(--disp);box-shadow:0 0 0 2px var(--panel)}
+.av.lg{width:42px;height:42px;font-size:19px}
+.av.sm{width:22px;height:22px;font-size:11px}
+.stack{display:inline-flex}.stack .av{margin-left:-6px}.stack .av:first-child{margin-left:0}
+/* home */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;margin:12px 0 18px}
+.hero svg{width:100%;height:auto}
+.homegrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.homegrid .panel h2{font:700 20px var(--disp);margin:0 0 4px}
+.homegrid .panel p{color:var(--muted);margin:0 0 14px;font-size:14.5px}
+.namebox{max-width:360px;margin-top:18px}
+.rules{margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rule{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;color:var(--muted)}
+.rule b{display:block;color:var(--ink);font:700 15px var(--disp);margin-bottom:2px}
+.code{font:700 46px/1 var(--mono);letter-spacing:.2em;color:var(--accent)}
+.plist{list-style:none;padding:0;margin:14px 0}
+.plist li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-weight:600}
+.tag{font:600 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:6px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+/* game header */
+.g-head{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.g-head .logo{font-size:24px}
+.steps{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font:600 13px var(--sans);color:var(--muted)}
+.step.on{color:var(--ink);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.step i{display:flex;gap:3px}.step i b{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.step i b.f{background:var(--accent)}
+.timer{position:relative;width:52px;height:52px;flex:none}
+.timer svg{width:52px;height:52px;transform:rotate(-90deg)}
+.timer .trk{fill:none;stroke:var(--line);stroke-width:4}
+.timer .rng{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;transition:stroke-dasharray .25s linear}
+.timer.low .rng{stroke:var(--bad)}
+.timer.idle{visibility:hidden}
+.timer span{position:absolute;inset:0;display:grid;place-items:center;font:700 16px var(--mono)}
+.timer.low span{color:var(--bad)}
+/* players */
+.players{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.pcard{--c:var(--p0);position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);overflow:hidden}
+.pcard::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--c)}
+.pcard.turn{border-color:var(--c);box-shadow:0 0 0 2px var(--c),var(--shadow)}
+.pcard.out{opacity:.45;filter:grayscale(.7)}
+.pname{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pname em{font:600 10.5px var(--mono);font-style:normal;text-transform:uppercase;letter-spacing:.06em;margin-left:6px;padding:1px 6px;border-radius:5px;background:var(--c);color:#fff;vertical-align:2px}
+.pmeta{display:flex;gap:10px;align-items:center;font:500 12.5px var(--mono);color:var(--muted)}
+.tw{display:inline-flex;gap:2px}.tw i{width:8px;height:11px;border-radius:2px 2px 1px 1px;background:var(--line)}.tw i.on{background:var(--c)}
+.pscore{font:800 26px/1 var(--disp);text-align:right}
+.pscore small{display:block;font:500 11px var(--mono);color:var(--muted);letter-spacing:.06em}
+.pst{grid-column:1/-1;font:600 12.5px var(--sans);padding:5px 9px;border-radius:9px;background:var(--panel2);color:var(--muted);display:flex;gap:6px;align-items:center}
+.pst.ok{background:var(--ok-soft);color:var(--ok)} .pst.bad{background:var(--bad-soft);color:var(--bad)}
+.pst.act{background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--ink)}
+.pst.win{background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--ink)}
+.pst.wait::before,.pst.act::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+.banner{padding:10px 14px;border-radius:12px;margin-bottom:12px;font-weight:600}
+.banner.bad{background:var(--bad-soft);color:var(--bad)}
+/* grid */
+.gamegrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+.mapbox{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:20px;padding:10px;box-shadow:var(--shadow);position:sticky;top:12px}
+svg.map{width:100%;height:auto;display:block;overflow:visible}
+.hx{stroke:var(--hexline);stroke-width:3;transition:opacity .2s}
+.hx.click{cursor:pointer}
+.dim{opacity:.38}
+.sel{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:8 6;animation:dash 1s linear infinite;pointer-events:none}
+@keyframes dash{to{stroke-dashoffset:-28}}
+g.cl:hover .hx{filter:brightness(1.15)}
+.tgt{fill:none;stroke:var(--bad);stroke-width:6;pointer-events:none;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{stroke-opacity:.35}}
+.tn{font:600 12.5px var(--sans);text-anchor:middle;pointer-events:none}
+.tv{font:700 14px var(--mono);text-anchor:middle;pointer-events:none}
+.bdg{pointer-events:none}
+.bdg text{font:700 13px var(--disp);text-anchor:middle;fill:#fff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:12.5px;color:var(--muted);padding:4px 0 2px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+/* stage */
+.side{display:grid;gap:12px}
+.stage{padding:20px 20px 18px}
+.ctx{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:14px;margin-bottom:14px}
+.chip{display:inline-flex;gap:6px;align-items:center;padding:3px 9px 3px 3px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-weight:600;font-size:13.5px}
+.chip.ok{border-color:var(--ok);color:var(--ok)} .chip.bad{border-color:var(--bad);color:var(--bad)}
+.vs{font:800 13px var(--mono);color:var(--bad)}
+.qt{font:700 clamp(19px,2.4vw,23px)/1.3 var(--disp);margin:2px 0 14px}
+.opts{display:grid;gap:9px}
+.opt{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;border:2px solid transparent;border-radius:14px;padding:12px 14px;min-height:58px;cursor:pointer;background:var(--panel2);font-weight:600;font-size:15px;line-height:1.3;transition:transform .08s,border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:var(--line);transform:translateY(-1px)}
+.opt .let{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font:700 14px var(--mono);color:#fff}
+.l0{background:#e0533f}.l1{background:#2f7ce0}.l2{background:#d49a12}.l3{background:#22a06b}
 .opt:disabled{cursor:default}
-.opts.done .opt:not(.right):not(.mine){opacity:.3}
-.opt.mine{outline:3px solid var(--ink);outline-offset:2px}
-.opt.right{outline:3px solid var(--ok);outline-offset:2px}
-.opt .who{margin-left:auto;display:flex;gap:3px}
-.opt .who i{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
-.note{font-size:14px;color:var(--muted);margin-top:10px}
-.expl{font-size:14px;line-height:1.5;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
-.res{list-style:none;padding:0;margin:10px 0 0}
-.res li{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
-.res li .v{font:600 15px var(--mono);margin-left:auto}
-.res li.win{font-weight:700}
-.big{font:800 34px/1 var(--disp);color:var(--accent);margin:4px 0}
-.log{font-size:13px;color:var(--muted);margin-top:12px;max-height:120px;overflow:auto}
-.log div{padding:2px 0}
-.badge{display:inline-block;font:600 11px var(--mono);padding:2px 6px;border-radius:5px;background:var(--bg);color:var(--muted);margin-left:6px;vertical-align:middle}
-@media (max-width:760px){
-  .home{grid-template-columns:1fr}
+.opt.mine{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--panel2))}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opts.rev .opt:not(.right):not(.wrong){opacity:.5}
+.opt .side-r{display:flex;gap:6px;align-items:center}
+.pill{font:700 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.pill.ok{background:var(--ok);color:#fff}.pill.me{background:var(--accent);color:#1a1205}
+.res{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px}
+.res td{padding:8px 6px;border-top:1px solid var(--line)}
+.res td:first-child{width:34px}
+.res .r{text-align:right;font:600 13.5px var(--mono);white-space:nowrap}
+.res .ok{color:var(--ok);font-weight:700}.res .bad{color:var(--bad);font-weight:700}
+.expl{margin-top:14px;padding:12px 14px;border-left:3px solid var(--ok);background:var(--panel2);border-radius:0 12px 12px 0;font-size:14px;line-height:1.55}
+.expl b{color:var(--ok)}
+.tipf{display:flex;gap:10px;align-items:stretch}
+.tipf .wrapi{position:relative;flex:1}
+.tipf .inp{font:700 24px var(--mono);padding:14px 70px 14px 16px}
+.tipf .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font:600 15px var(--mono);color:var(--muted)}
+.tipf .btn{font-size:17px;padding:0 24px}
+.sent{display:flex;gap:10px;align-items:center;padding:14px;border-radius:12px;background:var(--ok-soft);color:var(--ok);font-weight:600}
+.truth{display:flex;align-items:baseline;gap:10px;margin:6px 0 2px}
+.truth b{font:800 38px/1 var(--disp);color:var(--ok)}
+.truth span{font:600 16px var(--mono);color:var(--muted)}
+svg.nl{width:100%;height:auto;display:block;margin:6px 0}
+.rank{list-style:none;padding:0;margin:8px 0 0}
+.rank li{display:grid;grid-template-columns:auto auto 1fr auto auto;gap:10px;align-items:center;padding:9px 10px;border-radius:12px;font-size:14.5px}
+.rank li.w{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.rank .pos{font:800 16px var(--disp);width:24px;text-align:center}
+.rank .v{font:700 15px var(--mono)}
+.rank .d{font:500 12.5px var(--mono);color:var(--muted);text-align:right;min-width:9ch}
+.big{font:800 clamp(26px,4vw,34px)/1.1 var(--disp);margin:6px 0}
+.hint{display:flex;gap:12px;align-items:center;padding:16px;border-radius:14px;border:2px dashed var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);font-weight:700;font-size:17px}
+.plan{list-style:none;padding:0;margin:14px 0 0}
+.plan li{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14.5px}
+.plan li .t{margin-left:auto;font-weight:700}
+.plan li .w{margin-left:auto;color:var(--muted)}
+.outcome{text-align:center;padding:10px 0}
+.outcome .ic{font-size:44px;line-height:1}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end;margin:14px 0}
+.pod{text-align:center}
+.pod .bar{border-radius:12px 12px 4px 4px;background:var(--c);color:#fff;font:800 22px var(--disp);display:grid;place-items:center;margin-top:8px}
+.pod .nm{font-weight:700;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pod .sc{font:600 13px var(--mono);color:var(--muted)}
+.logbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 16px}
+.logbox ol{list-style:none;padding:0;margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.logbox li{padding:4px 0;border-top:1px solid var(--line)}
+.logbox li:first-child{color:var(--ink);border-top:0}
+
+
+.qtimer{display:flex;align-items:center;gap:12px;margin:2px 0 12px}
+.qbar{flex:1;height:10px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);overflow:hidden}
+.qbar i{display:block;height:100%;width:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#fff));transition:width .25s linear}
+.qtimer span{font:800 22px/1 var(--mono);min-width:3.2ch;text-align:right;color:var(--accent)}
+.qtimer.low .qbar i{background:var(--bad)}.qtimer.low span{color:var(--bad);animation:blink .6s infinite}
+/* timeline */
+.tl{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin-bottom:6px;scrollbar-width:thin}
+.seg{flex:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:7px 10px 9px}
+.seg.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.seg.done{opacity:.55}
+.sl{font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;white-space:nowrap}
+.seg.on .sl{color:var(--accent)}
+.ss{display:flex;gap:5px;align-items:center}
+.st{--c:var(--line);position:relative;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;font:700 12px/1 var(--disp);opacity:.9}
+.st.qq{background:var(--panel2);color:var(--ink);border:1px solid var(--line);font-family:var(--mono);width:auto;min-width:26px;padding:0 6px;border-radius:13px;gap:3px;display:inline-flex;align-items:center;justify-content:center}
+.st.qq small{font:600 10.5px var(--mono);color:var(--muted)}
+.st.att::after{content:"⚔";position:absolute;right:-5px;bottom:-5px;font-size:10px;background:var(--panel);border-radius:50%;width:15px;height:15px;display:grid;place-items:center}
+.st.done{opacity:.4}
+.st.done::before{content:"✓";position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.35);border-radius:inherit;font-size:13px}
+.st.qq.done::before{background:var(--panel2);color:var(--ok)}
+.st.skip{opacity:.2;text-decoration:line-through}
+.st.now{box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--accent);animation:nowp 1.2s ease-in-out infinite;opacity:1}
+@keyframes nowp{50%{box-shadow:0 0 0 3px var(--panel),0 0 0 7px color-mix(in srgb,var(--accent) 40%,transparent)}}
+.st.me{outline:2px solid var(--ink);outline-offset:1px}
+.seg.fin .eta{font:600 12.5px var(--sans);color:var(--ink);white-space:nowrap;margin-left:4px}
+/* leaderboard */
+.lb{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.lb li{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;padding:10px 12px;background:var(--panel2)}
+.lb li.first{background:color-mix(in srgb,var(--accent) 10%,var(--panel2));border-color:color-mix(in srgb,var(--accent) 60%,var(--line));border-left-color:var(--c)}
+.lb-top{display:flex;align-items:center;gap:10px}
+.lb-top .pos{font:800 18px var(--disp);width:26px}
+.lb-top .nm{font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-top .sc{font:800 22px var(--disp)}
+.lb-stats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:13px;color:var(--muted)}
+.lb-stats b{color:var(--ink);font-family:var(--mono)}
+.lb-aw{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.aw{font:600 12px var(--sans);padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--ink)}
+@media (max-width:860px){
   .gamegrid{grid-template-columns:1fr}
-  .pc .sc{font-size:18px}.pc .nm{font-size:13px}.mz{display:none}.top{gap:6px}.pc{padding:7px 9px}
+  .mapbox{position:static}
+  .hero{grid-template-columns:1fr}.hero svg{max-width:420px}
+  .homegrid,.rules{grid-template-columns:1fr 1fr}
 }
-@media (prefers-reduced-motion:reduce){.hex{transition:none}}
+@media (max-width:560px){
+  .homegrid,.rules{grid-template-columns:1fr}
+  .players{gap:6px}
+  .pcard{grid-template-columns:auto 1fr;padding:9px 10px;gap:4px 8px}
+  .pcard .av.lg{display:none}
+  .pcard>div:nth-child(2){grid-column:1/-1}
+  .pname em{display:none}.pcard.me .pname{text-decoration:underline;text-decoration-color:var(--c);text-decoration-thickness:3px;text-underline-offset:3px}
+  .mapbox{padding:4px}
+  .opt{grid-template-columns:auto 1fr}.opt .side-r{grid-column:2}
+  .pscore{grid-column:1/-1;text-align:left;font-size:20px}
+  .pmeta{font-size:11px;gap:6px}
+  .pst{font-size:11.5px;padding:4px 7px}
+  .g-head .logo{display:none}.steps{margin-left:0}
+  .tipf{flex-direction:column}.tipf .btn{padding:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -162,7 +301,8 @@ function drawTip(){ if (!H.tipDeck.length) H.tipDeck = shuf(DATA.tips.map((_, i)
 function log(t){ H.S.log.unshift(t); H.S.log = H.S.log.slice(0, 30); }
 function setPhase(ph, ms, fn){
   const S = H.S; S.phase = ph; S.seq++; clearTimeout(H.timer);
-  S.dl = ms ? Date.now() + ms : 0;
+  S.dl = ms ? Date.now() + ms : 0; S.dur = ms || 0;
+  if (ph !== "q_res") S.resPicks = null;
   if (ms){ const seq = S.seq; H.timer = setTimeout(() => { if (H.S.seq === seq) fn(); }, ms); }
 }
 function push(){
@@ -182,7 +322,8 @@ function hostStart(){
   S.players.forEach(p => { p.bonus = 0; p.out = false; });
   S.tiles = TILES.map(t => ({ id:t.id, owner:null, value:0, towers:0 }));
   CASTLES.forEach((tid, i) => { Object.assign(S.tiles[tid], { owner:i, value:1000, towers:3 }); });
-  S.log = []; S.round = 0; S.ctx = null; S.att = null;
+  S.log = []; S.round = 0; S.ctx = null; S.att = null; S.final = null;
+  S.stats = S.players.map(() => ({ q:0, ok:0, t:0, tipN:0, tipW:0, attN:0, attW:0, defN:0, defW:0, castles:0 }));
   log("Indul a játék! Mindenkinek van egy vára (3 bástya).");
   expRound();
 }
@@ -239,14 +380,17 @@ function doAnswer(pid, c){
 function revealMC(){
   const S = H.S; const ok = p => H.sec.ans[p] && H.sec.ans[p].c === H.sec.correct;
   S.reveal = { correct: H.sec.correct, ans: H.sec.ans, ok: Object.fromEntries(S.need.map(p => [p, ok(p)])) };
+  S.need.forEach(p => { const st = S.stats[p]; st.q++; if (H.sec.ans[p]){ st.t += H.sec.ans[p].t; } else st.t += T_Q; if (ok(p)) st.ok++; });
   if (S.ctx === "exp"){
+    S.resPicks = {};
     for (const p in S.picks){
       const pid = +p, t = S.picks[p];
+      S.resPicks[p] = { tile:t, ok:ok(pid) };
       if (ok(pid)){ Object.assign(S.tiles[t], { owner:pid, value:200 }); log(S.players[pid].name + " ✓ megszerezte: " + TILES[t].name); }
       else log(S.players[pid].name + " ✗ elvesztette: " + TILES[t].name);
     }
     S.picks = {};
-    setPhase("q_res", T_RES, afterExp);
+    const rp = S.resPicks; setPhase("q_res", T_RES, afterExp); S.resPicks = rp;
   } else {
     const { a, d } = S.att;
     if (ok(a) && ok(d)) setPhase("q_res", T_RES, () => askTip([a, d], "bat"));
@@ -283,6 +427,7 @@ function revealTip(){
   });
   const w = rank[0];
   S.reveal = { v:V, ans:A, rank, winner:w };
+  S.need.forEach(p => S.stats[p].tipN++); S.stats[w].tipW++;
   log("Tipp: " + fmt(V) + " " + S.q.unit + " — " + S.players[w].name + " volt a legközelebb");
   if (S.ctx === "exp"){
     setPhase("tip_res", T_RES, () => { H.S.cur = w; setPhase("tip_pick", T_PICK, () => { const v = validPicks(H.S, w); doPick(w, v[Math.floor(Math.random() * v.length)]); }); push(); });
@@ -308,21 +453,23 @@ function nextAttacker(){
 }
 function battleOutcome(w){
   const S = H.S, { a, d, tile } = S.att, t = S.tiles[tile];
+  S.stats[a].attN++; S.stats[d].defN++; if (w === a) S.stats[a].attW++; else S.stats[d].defW++;
   if (w === a){
     if (t.towers > 0){
       t.towers--;
       if (t.towers === 0){
         S.tiles.forEach(x => { if (x.owner === d) x.owner = a; });
-        S.players[d].out = true;
+        S.players[d].out = true; S.stats[a].castles++;
         log("🏰 " + S.players[a].name + " bevette " + S.players[d].name + " várát — minden területe az övé!");
-      } else log(S.players[a].name + " ledöntött egy bástyát (" + t.towers + " maradt)");
+        S.att.msg = "bevette " + S.players[d].name + " várát! Minden területe az övé.";
+      } else { log(S.players[a].name + " ledöntött egy bástyát (" + t.towers + " maradt)"); S.att.msg = "ledöntött egy bástyát — " + t.towers + " maradt."; }
     } else {
       t.owner = a; t.value = Math.max(t.value, 400);
-      log(S.players[a].name + " elfoglalta: " + TILES[tile].name + " (400)");
+      log(S.players[a].name + " elfoglalta: " + TILES[tile].name + " (400)"); S.att.msg = "elfoglalta: " + TILES[tile].name + " (400 pont)";
     }
     S.att.win = "a";
   } else {
-    S.players[d].bonus += 100; S.att.win = "d";
+    S.players[d].bonus += 100; S.att.win = "d"; S.att.msg = "megvédte: " + TILES[tile].name + " (+100 pont)";
     log(S.players[d].name + " megvédte (+100)");
   }
   setPhase("bat_res", 2600 / SPEED, () => { H.S.turn++; nextAttacker(); });
@@ -332,6 +479,9 @@ function endGame(){
   const S = H.S;
   S.att = null; S.picks = {};
   S.final = S.players.map((_, i) => i).sort((x, y) => (S.players[x].out - S.players[y].out) || score(S, y) - score(S, x));
+  H.tally = H.tally || {};
+  S.final.forEach((p, k) => { const n = S.players[p].nm0 || S.players[p].name, T = H.tally[n] = H.tally[n] || { g:0, w:0, pts:0 }; T.g++; T.pts += score(S, p); if (k === 0) T.w++; });
+  S.tally = Object.entries(H.tally).map(([n, T]) => ({ n, ...T })).sort((x, y) => y.w - x.w || y.pts - x.pts);
   setPhase("end", 0); push();
 }
 function hostAct(pid, a){
@@ -454,30 +604,57 @@ async function joinOnline(code, name){
 function act(a){ if (NET.role === "client") pub(NET.T + "/c", { t:"act", cid: NET.cid, a }); else hostAct(NET.pid, a); }
 
 /* ---------- UI ---------- */
-const UI = { S:null, dl:0, mine:null, seq:-1, screen:"home", net:"", err:"" };
+const UI = { S:null, dl:0, dur:0, mine:null, seq:-1, screen:"home", net:"", err:"", tipSent:false, myTip:null, built:false };
 function onState(S, left){
-  if (S.seq !== UI.seq){ if (S.phase === "q" || S.phase === "tip") { UI.mine = null; UI.tipSent = false; } UI.seq = S.seq; }
-  UI.S = S; UI.dl = left ? Date.now() + left : 0; UI.screen = S.phase === "lobby" ? "lobby" : "game";
+  if (S.seq !== UI.seq){ if (S.phase === "q" || S.phase === "tip"){ UI.mine = null; UI.tipSent = false; UI.myTip = null; } UI.seq = S.seq; }
+  UI.S = S; UI.dl = left ? Date.now() + left : 0; UI.dur = S.dur || left || 0;
+  const scr = S.phase === "lobby" ? "lobby" : "game";
+  if (scr !== UI.screen){ UI.screen = scr; UI.built = false; }
   draw();
 }
+const ini = n => (String(n).trim()[0] || "?").toUpperCase();
+const PN = (S, p) => esc(S.players[p].name);
+function av(S, p, cls){ return `<span class="av ${cls || ""}" style="--c:${PCOL[p]}" title="${PN(S, p)}">${esc(ini(S.players[p].name))}</span>`; }
+function chip(S, p, extra, cls){ return `<span class="chip ${cls || ""}">${av(S, p, "sm")}${PN(S, p)}${extra ? " " + extra : ""}</span>`; }
+function setH(id, html){ const el = document.getElementById(id); if (el && el._h !== html){ el.innerHTML = html; el._h = html; return true; } return false; }
+function num(v){ const r = Math.abs(v) >= 100 ? Math.round(v * 10) / 10 : Math.round(v * 100) / 100; return String(r).replace(".", ","); }
+function isWar(S){ return S.phase.startsWith("bat") || (S.ctx === "bat" && ["q","q_res","tip","tip_res"].includes(S.phase)); }
+
+/* ---------- home ---------- */
+function heroSVG(){
+  const pts = (x, y, r) => { let p = []; for (let i = 0; i < 6; i++){ const a = Math.PI / 180 * (60 * i - 30); p.push((x + r * Math.cos(a)).toFixed(1) + "," + (y + r * Math.sin(a)).toFixed(1)); } return p.join(" "); };
+  const cells = [[0,0,"var(--p0)"],[1,0,"var(--hexfree)"],[2,0,"var(--p1)"],[3,0,"var(--p1)"],[.5,1,"var(--p0)"],[1.5,1,"var(--p2)"],[2.5,1,"var(--hexfree)"],[3.5,1,"var(--p1)"],[1,2,"var(--p2)"],[2,2,"var(--p2)"],[3,2,"var(--hexfree)"]];
+  const r = 44, w = Math.sqrt(3) * r;
+  return `<svg viewBox="0 0 ${w * 4.6} ${r * 5.2}" aria-hidden="true">${cells.map(([c, row, f]) => `<polygon points="${pts(w * c + w * .6, row * 1.5 * r + r + 4, r - 3)}" fill="${f}" stroke="var(--bg)" stroke-width="4"/>`).join("")}
+  <g transform="translate(${w * .6},${r + 4})" fill="#fff"><path d="M-13 9v-15h5v5h4v-5h8v5h4v-5h5v15z"/></g>
+  <g transform="translate(${w * 2.6},${r + 4})" fill="#fff"><path d="M-13 9v-15h5v5h4v-5h8v5h4v-5h5v15z"/></g>
+  <g transform="translate(${w * 1.6},${2 * 1.5 * r + r + 4})" fill="#fff"><path d="M-13 9v-15h5v5h4v-5h8v5h4v-5h5v15z"/></g>
+  <polygon points="${pts(w * 3.1, 2 * 1.5 * r + r + 4, r - 3)}" fill="none" stroke="var(--ink)" stroke-width="3" stroke-dasharray="8 6"/></svg>`;
+}
 function home(){
-  const room = new URLSearchParams(location.search).get("room") || "";
+  const room = QS.get("room") || "";
   let nm = ""; try { nm = localStorage.getItem("af-name") || ""; } catch(e){}
   $("#app").innerHTML = `
-  <h1>Áram<span>foglaló</span></h1>
-  <p class="sub">Honfoglaló-szerű kvízcsata a Challenge.ON döntő kérdéseiből. 3 játékos, vár, terjeszkedés, háború.</p>
-  <div class="field" style="max-width:340px;margin-top:18px"><label for="nm">A neved</label><input type="text" id="nm" maxlength="18" value="${esc(nm)}" placeholder="pl. Márk"></div>
-  <div class="home">
-    <div class="panel"><h2>Online szoba</h2><p>Hozz létre egy szobát, és küldd el a kódot vagy a linket a csapattársaidnak. Az üres helyeket botok töltik ki.</p>
-      <button class="btn pri" id="bHost">Szoba létrehozása</button></div>
-    <div class="panel"><h2>Csatlakozás</h2><p>Írd be a 4 betűs szobakódot.</p>
-      <div class="row"><input type="text" id="code" maxlength="4" value="${esc(room)}" placeholder="KÓD" style="max-width:130px;text-transform:uppercase;font-family:var(--mono);letter-spacing:.15em"><button class="btn pri" id="bJoin">Belépés</button></div></div>
-    <div class="panel" style="grid-column:1/-1"><h2>Gyakorlás botok ellen</h2><p>Egyedül, internet nélkül: te és két bot.</p><button class="btn" id="bSolo">Indítás</button></div>
+  <div class="hero"><div>
+    <h1 class="logo">Áram<span>foglaló</span></h1>
+    <p class="sub">Honfoglaló-szerű kvízcsata a Challenge.ON döntő kérdéseiből. Foglalj mezőket, tippelj pontosan, ostromold meg a többiek várát.</p>
+    <div class="namebox"><div class="lbl">A neved</div><input class="inp" type="text" id="nm" maxlength="18" value="${esc(nm)}" placeholder="pl. Márk"></div>
+  </div>${heroSVG()}</div>
+  <div class="homegrid">
+    <div class="panel"><h2>Online szoba</h2><p>Kapsz egy 4 betűs kódot és egy linket. Küldd el a csapatnak, az üres helyekre bot ül.</p><button class="btn pri" id="bHost">Szoba létrehozása</button></div>
+    <div class="panel"><h2>Csatlakozás</h2><p>Írd be a házigazdától kapott kódot.</p>
+      <div class="row"><input class="inp" type="text" id="code" maxlength="4" value="${esc(room)}" placeholder="KÓD" style="max-width:130px;text-transform:uppercase;font-family:var(--mono);letter-spacing:.2em"><button class="btn pri" id="bJoin">Belépés</button></div></div>
+    <div class="panel"><h2>Gyakorlás</h2><p>Egyedül, két bot ellen. Internet sem kell hozzá.</p><button class="btn" id="bSolo">Indítás</button></div>
   </div>
   <div class="err" id="err">${esc(UI.err)}</div>
-  <div class="rules"><b>Szabályok röviden.</b> <b>1. Terjeszkedés (3 kör):</b> sorban mindenki kijelöl egy szabad, szomszédos mezőt, majd jön egy 4 válaszos kérdés — aki jól felel, megkapja a kijelölt mezőt (200 pont). A maradék mezőkről tippkérdések döntenek: aki legközelebb tippel, választ. <b>2. Háború (3 kör):</b> mindenki sorban megtámad egy szomszédos ellenséges mezőt. Ha csak a támadó felel jól, elfoglalja (400 pont); ha a védő is jól felel, tippkérdés dönt; ha a támadó hibázik, a védő +100 pontot kap. A vár 1000 pontot ér és 3 bástyája van — ha mindhárom ledől, a vár ura kiesik, és minden területe a támadóé lesz. A végén a legtöbb pont nyer.</div>`;
+  <div class="rules">
+    <div class="rule"><b>1 · Terjeszkedés</b>3 kör. Sorban mindenki kijelöl egy szabad mezőt, aztán 4 válaszos kérdés: aki jól felel, megkapja (200 pont).</div>
+    <div class="rule"><b>2 · Tippkérdés</b>A maradék mezőkért számot kell tippelni. Aki a legközelebb van, választ. Egyenlőségnél a gyorsabb nyer.</div>
+    <div class="rule"><b>3 · Háború</b>3 kör támadás. Ha csak a támadó felel jól, elfoglalja (400). Ha mindketten, tipp dönt. Sikeres védés: +100.</div>
+    <div class="rule"><b>4 · Vár</b>1000 pont, 3 bástya. Ha mindhárom ledől, a gazdája kiesik, és minden területe a támadóé. A végén a legtöbb pont nyer.</div>
+  </div>`;
   const nmv = () => { const v = $("#nm").value.trim() || "Játékos"; try { localStorage.setItem("af-name", v); } catch(e){} return v; };
-  const fail = e => { UI.err = e && e.message === "full" ? "A szoba megtelt vagy már elindult." : e && e.message === "load" ? "Nem sikerült betölteni az online modult. Próbáld a GitHub-os változatot, vagy játssz botok ellen." : e && e.message === "noroom" ? "Nincs ilyen szoba, vagy a házigazda oldala nincs nyitva. Ellenőrizd a kódot." : "Nem sikerült kapcsolódni a szerverhez (" + (e && e.message || "?") + "). Ellenőrizd a netet."; $("#err").textContent = UI.err; };
+  const fail = e => { UI.err = e && e.message === "full" ? "A szoba megtelt vagy már elindult." : e && e.message === "load" ? "Nem sikerült betölteni az online modult. Ellenőrizd a netet, vagy játssz botok ellen." : e && e.message === "noroom" ? "Nincs ilyen szoba, vagy a házigazda oldala nincs nyitva. Ellenőrizd a kódot." : "Nem sikerült kapcsolódni a szerverhez (" + (e && e.message || "?") + "). Ellenőrizd a netet."; $("#err").textContent = UI.err; };
   $("#bSolo").onclick = () => { NET.role = "solo"; NET.pid = 0; hostInit(nmv()); hostStart(); };
   $("#bHost").onclick = async e => { e.target.disabled = true; e.target.textContent = "Kapcsolódás…"; try { await hostOnline(nmv()); push(); } catch(err){ fail(err); e.target.disabled = false; e.target.textContent = "Szoba létrehozása"; } };
   $("#bJoin").onclick = async e => { const c = $("#code").value.trim().toUpperCase(); if (c.length !== 4){ $("#err").textContent = "4 betűs kód kell."; return; } e.target.disabled = true; e.target.textContent = "…"; try { await joinOnline(c, nmv()); } catch(err){ fail(err); e.target.disabled = false; e.target.textContent = "Belépés"; } };
@@ -485,125 +662,317 @@ function home(){
 function lobby(){
   const S = UI.S, isHost = NET.role === "host";
   const link = location.origin + location.pathname + "?room=" + S.code + (QS.get("broker") ? "&broker=" + encodeURIComponent(QS.get("broker")) : "");
-  $("#app").innerHTML = `<h1>Áram<span>foglaló</span></h1>
-  <div class="panel" style="max-width:520px;margin-top:20px">
-    <div style="font-size:13px;color:var(--muted);font-weight:600">SZOBAKÓD</div>
+  $("#app").innerHTML = `<h1 class="logo">Áram<span>foglaló</span></h1>
+  <div class="panel" style="max-width:560px;margin-top:20px">
+    <div class="lbl">Szobakód</div>
     <div class="code" id="code">${esc(S.code || "")}</div>
-    ${isHost ? `<div class="row" style="margin:12px 0"><button class="btn" id="cp">Link másolása</button><span class="note" id="cpn" style="margin:0"></span></div>` : ""}
-    <ul class="plist">${[0,1,2].map(i => { const p = S.players[i]; return `<li><span class="dot" style="background:${PCOL[i]}"></span>${p ? esc(p.name) + (i === NET.pid ? '<span class="badge">te</span>' : '') + (i === 0 ? '<span class="badge">házigazda</span>' : '') : '<span style="color:var(--muted)">üres hely — bot lesz</span>'}</li>`; }).join("")}</ul>
-    ${isHost ? `<p class="note" style="margin:0 0 12px">A játék a te eszközödön fut: tartsd nyitva ezt az oldalt, telefonon ne válts át más appra játék közben.</p><button class="btn pri" id="go">Játék indítása</button>` : `<p class="note">Várunk, hogy a házigazda elindítsa a játékot…</p>`}
+    ${isHost ? `<div class="row" style="margin:14px 0 4px"><button class="btn" id="cp">Link másolása</button><span class="note" id="cpn"></span></div>` : ""}
+    <ul class="plist">${[0,1,2].map(i => { const p = S.players[i]; return `<li>${p ? av(S, i, "lg") + esc(p.name) + (i === NET.pid ? ' <span class="tag">te</span>' : '') + (i === 0 ? ' <span class="tag">házigazda</span>' : '') : `<span class="av lg" style="--c:var(--line)">?</span><span class="note">Üres hely — bot ül ide</span>`}</li>`; }).join("")}</ul>
+    ${isHost ? `<p class="note" style="margin:0 0 14px">A játék a te eszközödön fut: tartsd nyitva ezt az oldalt, telefonon ne válts át más appra játék közben.</p><button class="btn pri" id="go">Játék indítása</button>` : `<p class="note">Bent vagy. Várunk, hogy a házigazda elindítsa a játékot…</p>`}
   </div>`;
   if (isHost){
     $("#go").onclick = () => hostStart();
     $("#cp").onclick = async () => { try { await navigator.clipboard.writeText(link); $("#cpn").textContent = "Másolva!"; } catch(e){ $("#cpn").textContent = link; } };
   }
 }
-const PH = { exp_pick:"Terjeszkedés", tip_pick:"Terjeszkedés", q:"Kérdés", q_res:"Eredmény", tip:"Tippkérdés", tip_res:"Tipp eredménye", bat_pick:"Háború", bat_res:"Csata eredménye", end:"Vége" };
+
+function rot(arr, r){ const o = arr.slice(); for (let i = 0; i < r % (o.length || 1); i++) o.push(o.shift()); return o; }
+function timelineHTML(S, me){
+  const ph = S.phase, war = isWar(S) || ph === "end";
+  const tipStage = !war && S.ctx === "exp" && ["tip","tip_res","tip_pick"].includes(ph);
+  const alivePs = [0,1,2].filter(p => alive(S, p));
+  const segs = [];
+  let rem = 0; // estimated remaining seconds
+  for (let r = 1; r <= EXP_ROUNDS; r++){
+    const ord = r === S.round && !war && !tipStage && S.order ? S.order : rot([0,1,2], r - 1);
+    const segDone = war || tipStage || r < S.round, segNow = !segDone && r === S.round;
+    const steps = ord.map((p, k) => {
+      let st = segDone ? "done" : !segNow ? "" : ph === "exp_pick" ? (k < S.turn ? "done" : k === S.turn ? "now" : "") : "done";
+      if (st !== "done") rem += 7;
+      return { p, st, t: PN(S, p) + " mezőt választ" };
+    });
+    const qst = segDone ? "done" : segNow && (ph === "q" || ph === "q_res") ? "now" : "";
+    if (qst !== "done") rem += 17;
+    steps.push({ q:"?", st:qst, t:"Kérdés mindenkinek" });
+    segs.push({ lbl:"Terjeszkedés " + r, steps, now: segNow, done: segDone });
+  }
+  const free = S.tiles.filter(t => t.owner === null).length;
+  const tipsN = tipStage ? free : null;
+  const tipDone = war, tipNow = tipStage;
+  if (!tipDone) rem += (tipStage ? free : 2) * 26;
+  segs.push({ lbl:"Tippkérdések", steps:[{ q:"#", st: tipDone ? "done" : tipNow ? "now" : "", t:"Tippkérdések a maradék mezőkért", x: tipsN != null ? "×" + tipsN : "" }], now:tipNow, done:tipDone, tip:true });
+  for (let r = 1; r <= BAT_ROUNDS; r++){
+    const inRound = war && ph !== "end" && r === S.round;
+    const ord = inRound && S.order ? S.order : rot(alivePs, r - 1);
+    const segDone = ph === "end" || (war && r < S.round), segNow = inRound;
+    const steps = ord.map((p, k) => {
+      let st = segDone ? "done" : !segNow ? "" : k < S.turn ? "done" : k === S.turn ? "now" : "";
+      if (!alive(S, p) && st !== "done") st = "skip";
+      if (st === "" || st === "now") rem += 30;
+      return { p, st, att:true, t: PN(S, p) + " támad" };
+    });
+    segs.push({ lbl:"Háború " + r, steps, now: segNow, done: segDone });
+  }
+  const end = ph === "end";
+  const mins = Math.round(rem / 60);
+  const eta = end ? "Vége" : rem < 60 ? "< 1 perc van hátra" : "≈ " + mins + " perc van hátra";
+  UI.eta = end ? "" : rem < 60 ? "< 1 perc" : "≈ " + mins + " perc";
+  let h = "";
+  segs.forEach(sg => {
+    h += `<div class="seg${sg.now ? " on" : ""}${sg.done ? " done" : ""}"><div class="sl">${esc(sg.lbl)}</div><div class="ss">`;
+    sg.steps.forEach(st => {
+      const cls = "st " + st.st + (st.st === "now" ? " now" : "");
+      if (st.p != null) h += `<span class="${cls}${st.att ? " att" : ""}${st.p === me ? " me" : ""}" style="--c:${PCOL[st.p]}" title="${st.t}">${esc(ini(S.players[st.p].name))}</span>`;
+      else h += `<span class="${cls} qq" title="${st.t}">${st.q}${st.x ? `<small>${st.x}</small>` : ""}</span>`;
+    });
+    h += `</div></div>`;
+  });
+  h += `<div class="seg fin${end ? " on" : ""}"><div class="sl">Cél</div><div class="ss"><span class="st ${end ? "now" : ""} qq">🏁</span><span class="eta">${eta}</span></div></div>`;
+  return h;
+}
+function awards(S){
+  const st = S.stats || [], ps = S.players.map((_, i) => i);
+  const A = {}; const give = (fn, lbl, better) => {
+    const vals = ps.map(p => fn(st[p])); const ok = vals.filter(v => v != null);
+    if (!ok.length) return; const best = better === "min" ? Math.min(...ok) : Math.max(...ok);
+    if (better !== "min" && best <= 0) return;
+    ps.forEach((p, i) => { if (vals[i] === best) (A[p] = A[p] || []).push(lbl); });
+  };
+  give(s => s.q ? s.ok / s.q : null, "🎯 Legpontosabb");
+  give(s => s.q && s.ok ? s.t / s.q : null, "⚡ Leggyorsabb", "min");
+  give(s => s.tipW, "🔢 Tippkirály");
+  give(s => s.attW, "⚔️ Hódító");
+  give(s => s.defW, "🛡️ Várvédő");
+  return A;
+}
+function leaderboardHTML(S){
+  const A = awards(S), st = S.stats || [];
+  const pct = (a, b) => b ? Math.round(a / b * 100) + "%" : "–";
+  let h = `<div class="lbl" style="margin-top:18px">Ranglista</div><ol class="lb">`;
+  S.final.forEach((p, k) => {
+    const s = st[p] || {};
+    h += `<li class="${k === 0 ? "first" : ""}" style="--c:${PCOL[p]}">
+      <div class="lb-top"><span class="pos">${k + 1}.</span>${av(S, p)}<span class="nm">${PN(S, p)}${S.players[p].out ? ' <span class="tag">kiesett</span>' : ""}</span><span class="sc">${score(S, p)}</span></div>
+      <div class="lb-stats">
+        <span title="Helyes válaszok"><b>${s.ok || 0}/${s.q || 0}</b> helyes · ${pct(s.ok, s.q)}</span>
+        <span title="Átlagos válaszidő"><b>${s.q ? (s.t / s.q / 1000).toFixed(1).replace(".", ",") : "–"} s</b> átlag</span>
+        <span title="Megnyert tippkérdések"><b>${s.tipW || 0}/${s.tipN || 0}</b> tipp</span>
+        <span title="Sikeres támadások"><b>${s.attW || 0}/${s.attN || 0}</b> támadás</span>
+        <span title="Sikeres védések"><b>${s.defW || 0}/${s.defN || 0}</b> védés</span>
+        <span title="Birtokolt mezők"><b>${myTiles(S, p).length}</b> mező</span>
+      </div>
+      ${A[p] ? `<div class="lb-aw">${A[p].map(a => `<span class="aw">${a}</span>`).join("")}</div>` : ""}
+    </li>`;
+  });
+  h += `</ol>`;
+  if (S.tally && S.tally.some(t => t.g > 1)) h += `<div class="lbl" style="margin-top:16px">Összesítés (ebben a szobában)</div><table class="res tally">${S.tally.map(t => `<tr><td>${esc(t.n)}</td><td class="r">${t.w} győzelem</td><td class="r">${t.g} játék</td><td class="r">${t.pts} pont</td></tr>`).join("")}</table>`;
+  return h;
+}
+
+/* ---------- game screen ---------- */
 function draw(){
-  if (UI.screen === "home") return home();
-  if (UI.screen === "lobby") return lobby();
+  if (UI.screen === "home"){ UI.built = false; return home(); }
+  if (UI.screen === "lobby"){ UI.built = false; return lobby(); }
+  if (!UI.built){
+    $("#app").innerHTML = `<div class="g-head" id="hdr"></div><div class="tl" id="tl"></div><div class="players" id="top"></div><div id="netw"></div>
+      <div class="gamegrid"><div class="mapbox" id="map"></div><div class="side"><div class="panel stage" id="main"></div><div class="logbox" id="foot"></div></div></div>`;
+    UI.built = true;
+    $("#map").addEventListener("click", e => { const g = e.target.closest("g.cl"); if (g) act({ type:"pick", tile:+g.dataset.t }); });
+    $("#main").addEventListener("click", onMainClick);
+    $("#main").addEventListener("submit", onTipSubmit);
+  }
   const S = UI.S, me = NET.pid;
-  const tvEl = $("#tipv"), tvKeep = tvEl ? tvEl.value : null;
-  const war = S.phase.startsWith("bat") || (S.ctx === "bat" && ["q","q_res","tip","tip_res"].includes(S.phase));
-  const top = S.players.map((p, i) => `<div class="pc${S.cur === i && /pick/.test(S.phase) ? " cur" : ""}${p.out ? " dead" : ""}" style="--c:${PCOL[i]}">
-    <div class="nm">${esc(p.name)}${i === me ? '<span class="badge">te</span>' : ''}</div>
-    <div class="sc">${score(S, i)}</div>
-    <div class="meta">${p.out ? "kiesett" : "♜".repeat(S.tiles[CASTLES[i]].owner === i ? S.tiles[CASTLES[i]].towers : 0) + " · " + myTiles(S, i).length + '<span class="mz"> mező</span>'}</div></div>`).join("");
-  let title = (war ? "Háború" : "Terjeszkedés") + " · " + S.round + ". kör";
-  if (S.phase === "end") title = "Vége a játéknak";
-  $("#app").innerHTML = `<div class="top">${top}</div>
-    <div class="status"><div class="ph">${title}</div><div class="cd" id="cd"></div></div>
-    ${UI.net ? '<div class="panel" style="margin-bottom:12px;color:var(--bad)">Megszakadt a kapcsolat — újracsatlakozás…</div>' : ''}
-    <div class="gamegrid"><div class="mapbox">${mapSVG(S, me)}</div><div class="panel" id="side">${side(S, me)}</div></div>`;
-  wire(S, me); tick();
-  if (tvKeep !== null && $("#tipv")) $("#tipv").value = tvKeep;
+  const tlh = timelineHTML(S, me);
+  setH("hdr", header(S));
+  if (setH("tl", tlh)){ const c = $("#tl"), cur = c.querySelector(".now"); if (cur) c.scrollLeft = Math.max(0, cur.offsetLeft - c.clientWidth / 2 + 20); }
+  setH("top", playersHTML(S, me));
+  setH("netw", UI.net ? '<div class="banner bad">Megszakadt a kapcsolat — újracsatlakozás…</div>' : "");
+  setH("map", mapSVG(S, me));
+  if (setH("main", mainHTML(S, me))){ const i = $("#tipv"); if (i) i.focus({ preventScroll:true }); }
+  setH("foot", `<div class="lbl">Napló</div><ol>${S.log.slice(0, 6).map(l => `<li>${esc(l)}</li>`).join("")}</ol>`);
+  tick();
+}
+function header(S){
+  const war = isWar(S) || S.phase === "end";
+  const dots = (n, f) => [1,2,3].map(k => `<b class="${k <= f ? "f" : ""}"></b>`).join("");
+  const ef = war ? 3 : S.round, wf = S.phase === "end" ? 3 : war ? S.round : 0;
+  return `<div class="logo">Áram<span>foglaló</span></div>
+    <div class="steps"><div class="step ${!war ? "on" : ""}"><span>Terjeszkedés</span><i>${dots(3, ef)}</i></div>
+    <div class="step ${war && S.phase !== "end" ? "on" : ""}"><span>Háború</span><i>${dots(3, wf)}</i></div>${UI.eta ? `<div class="step" title="Becsült hátralévő idő">🏁 ${UI.eta}</div>` : ""}</div>
+    <div class="timer" id="tmr"><svg viewBox="0 0 44 44"><circle class="trk" cx="22" cy="22" r="19"/><circle class="rng" id="ring" cx="22" cy="22" r="19" pathLength="100" stroke-dasharray="0 100"/></svg><span id="cd"></span></div>`;
+}
+function towersHTML(S, i){ const t = S.tiles[CASTLES[i]]; const n = t && t.owner === i ? t.towers : 0; return [0,1,2].map(k => `<i class="${k < n ? "on" : ""}"></i>`).join(""); }
+function status(S, i){
+  const p = S.players[i], ph = S.phase, R = S.reveal;
+  if (p.out) return { t:"kiesett", c:"" };
+  let role = "";
+  if (S.att && isWar(S)) role = i === S.att.a ? "⚔ támad · " : i === S.att.d ? "🛡 véd · " : "";
+  if (/pick/.test(ph)) return S.cur === i ? { t: ph === "bat_pick" ? "célpontot választ…" : "mezőt választ…", c:"act" } : (S.picks && S.picks[i] != null ? { t:"jelölt: " + TILES[S.picks[i]].name, c:"" } : null);
+  if (ph === "q") return S.need.includes(i) ? (S.answered[i] ? { t: role + "✓ válaszolt", c:"ok" } : { t: role + "gondolkodik…", c:"wait" }) : { t:"figyel", c:"" };
+  if (ph === "q_res") return S.need.includes(i) ? (R.ok[i] ? { t: role + "✓ jó válasz (" + "ABCD"[R.ans[i].c] + ")", c:"ok" } : R.ans[i] ? { t: role + "✗ rossz (" + "ABCD"[R.ans[i].c] + ")", c:"bad" } : { t: role + "✗ nem felelt", c:"bad" }) : { t:"figyel", c:"" };
+  if (ph === "tip") return S.need.includes(i) ? (S.answered[i] ? { t: role + "✓ tippelt", c:"ok" } : { t: role + "gondolkodik…", c:"wait" }) : { t:"figyel", c:"" };
+  if (ph === "tip_res" && S.need.includes(i)){ const k = R.rank.indexOf(i); return k === 0 ? { t: role + "🏆 legközelebb", c:"win" } : { t: role + (k + 1) + ". hely", c:"" }; }
+  if (ph === "bat_res" && S.att && (i === S.att.a || i === S.att.d)){ const won = (S.att.win === "a") === (i === S.att.a); return { t: won ? "győzött" : "vesztett", c: won ? "ok" : "bad" }; }
+  if (ph === "end"){ const k = S.final.indexOf(i); return { t: k === 0 ? "🏆 győztes" : (k + 1) + ". hely", c: k === 0 ? "win" : "" }; }
+  return null;
+}
+function playersHTML(S, me){
+  return S.players.map((p, i) => { const st = status(S, i);
+    return `<div class="pcard${i === me ? " me" : ""}${S.cur === i && /pick/.test(S.phase) ? " turn" : ""}${p.out ? " out" : ""}" style="--c:${PCOL[i]}">
+      ${av(S, i, "lg")}
+      <div style="min-width:0"><div class="pname">${PN(S, i)}${i === me ? "<em>te</em>" : ""}</div><div class="pmeta"><span class="tw">${towersHTML(S, i)}</span><span>${myTiles(S, i).length} mező</span>${p.bonus ? `<span>+${p.bonus}</span>` : ""}</div></div>
+      <div class="pscore">${score(S, i)}<small>PONT</small></div>
+      ${st ? `<div class="pst ${st.c}">${esc(st.t)}</div>` : `<div class="pst" style="visibility:hidden">·</div>`}
+    </div>`; }).join("");
 }
 function mapSVG(S, me){
-  const myPick = S.cur === me && ["exp_pick","tip_pick"].includes(S.phase) ? validPicks(S, me) : S.cur === me && S.phase === "bat_pick" ? validTargets(S, me) : [];
-  let g = "";
+  const myTurn = S.cur === me && /pick/.test(S.phase) && S.players[me] && !S.players[me].out;
+  const sel = myTurn ? (S.phase === "bat_pick" ? validTargets(S, me) : validPicks(S, me)) : [];
+  const pickBy = {}; Object.entries(S.picks || {}).forEach(([p, t]) => pickBy[t] = +p);
+  const resBy = {}; Object.entries(S.resPicks || {}).forEach(([p, r]) => resBy[r.tile] = { p:+p, ok:r.ok });
+  let defs = "<defs>" + [0,1,2].map(i => `<linearGradient id="gp${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${PCOL[i]};stop-opacity:1"/><stop offset="1" style="stop-color:${PCOL[i]};stop-opacity:.78"/></linearGradient>`).join("") + "</defs>";
+  let g = "", over = "";
   TILES.forEach(t => {
-    const st = S.tiles[t.id], own = st.owner;
-    const fill = own === null ? "var(--free)" : PCOL[own];
-    const op = own === null ? 1 : st.value >= 1000 ? 1 : st.value >= 400 ? .92 : .72;
-    const cl = myPick.includes(t.id);
-    g += `<g class="${own !== null ? "owned" : ""}"><polygon class="hex${cl ? " click" : ""}" data-t="${t.id}" points="${hexPts(t.x, t.y)}" fill="${fill}" fill-opacity="${op}"/>`;
-    if (cl) g += `<polygon class="hl" points="${hexPts(t.x, t.y)}"/>`;
-    if (S.picks && Object.values(S.picks).includes(t.id)){ const pp = +Object.keys(S.picks).find(k => S.picks[k] === t.id); g += `<polygon class="pend" stroke="${PCOL[pp]}" points="${hexPts(t.x, t.y)}"/>`; }
-    if (S.att && S.att.tile === t.id) g += `<polygon class="target" points="${hexPts(t.x, t.y)}"/>`;
-    const castle = CASTLES.includes(t.id) && st.value === 1000;
-    g += `<text class="tl" x="${t.x}" y="${t.y - (castle ? 12 : 4)}">${esc(t.name)}</text>`;
-    if (castle) g += `<text class="tv" x="${t.x}" y="${t.y + 8}">${"♜".repeat(st.towers) || "🏳"}</text><text class="tl" x="${t.x}" y="${t.y + 24}">1000</text>`;
-    else if (own !== null) g += `<text class="tv" x="${t.x}" y="${t.y + 14}">${st.value}</text>`;
+    const st = S.tiles[t.id], own = st.owner, castle = CASTLES.includes(t.id) && st.value === 1000;
+    const fill = own === null ? "var(--hexfree)" : `url(#gp${own})`;
+    const op = own === null ? 1 : castle ? 1 : st.value >= 400 ? 1 : .8;
+    const cl = sel.includes(t.id), dim = myTurn && !cl;
+    const ink = own === null ? "var(--hexink)" : "#fff";
+    g += `<g class="${cl ? "cl" : ""}${dim ? " dim" : ""}" data-t="${t.id}"><polygon class="hx${cl ? " click" : ""}" points="${hexPts(t.x, t.y)}" fill="${fill}" fill-opacity="${op}"/>`;
+    if (pickBy[t.id] != null){ const p = pickBy[t.id]; g += `<polygon points="${hexPts(t.x, t.y)}" fill="${PCOL[p]}" fill-opacity=".22" stroke="${PCOL[p]}" stroke-width="4" stroke-dasharray="7 5"/>`; }
+    if (castle){
+      g += `<text class="tn" x="${t.x}" y="${t.y - 18}" fill="${ink}">${esc(t.name)}</text><path transform="translate(${t.x},${t.y + 2})" d="M-13 9v-15h5v5h4v-5h8v5h4v-5h5v15z" fill="#fff"/>`;
+      g += [0,1,2].map(k => `<rect x="${t.x - 14 + k * 10}" y="${t.y + 17}" width="8" height="8" rx="2" fill="#fff" fill-opacity="${k < st.towers ? 1 : .28}"/>`).join("");
+    } else {
+      g += `<text class="tn" x="${t.x}" y="${t.y + (own === null ? 4 : -3)}" fill="${ink}">${esc(t.name)}</text>`;
+      if (own !== null) g += `<text class="tv" x="${t.x}" y="${t.y + 15}" fill="${ink}">${st.value}</text>`;
+    }
     g += `</g>`;
+    if (cl) over += `<polygon class="sel" points="${hexPts(t.x, t.y)}"/>`;
+    if (pickBy[t.id] != null){ const p = pickBy[t.id]; over += badge(t.x, t.y - HR + 8, PCOL[p], ini(S.players[p].name)); }
+    if (resBy[t.id]){ const r = resBy[t.id]; over += badge(t.x - 12, t.y - HR + 8, PCOL[r.p], ini(S.players[r.p].name)) + badge(t.x + 12, t.y - HR + 8, r.ok ? "var(--ok)" : "var(--bad)", r.ok ? "✓" : "✗"); }
+    if (S.att && S.att.tile === t.id && S.phase !== "end"){ over += `<polygon class="tgt" points="${hexPts(t.x, t.y)}"/>` + badge(t.x - 12, t.y - HR + 8, PCOL[S.att.a], ini(S.players[S.att.a].name)) + badge(t.x + 12, t.y - HR + 8, "var(--bad)", "⚔"); }
   });
-  return `<svg class="map" viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Térkép">${g}</svg>`;
+  const legend = `<div class="legend">${S.players.map((p, i) => `<span><i style="background:${PCOL[i]}"></i>${PN(S, i)}</span>`).join("")}<span><i style="background:var(--hexfree)"></i>szabad</span>${myTurn ? '<span style="color:var(--ink);font-weight:600">▣ szaggatott = választható</span>' : ""}</div>`;
+  return `<svg class="map" viewBox="0 -6 ${VW} ${VH + 6}" role="img" aria-label="Térkép">${defs}${g}${over}</svg>${legend}`;
 }
-function whoDots(S, list){ return list.map(p => `<i style="background:${PCOL[p]}"></i>`).join(""); }
-function side(S, me){
-  const P = i => `<b style="color:${PCOL[i]}">${esc(S.players[i].name)}</b>`;
-  const ph = S.phase;
+function badge(x, y, col, txt){ return `<g class="bdg"><circle cx="${x}" cy="${y}" r="12" fill="${col}" stroke="var(--panel)" stroke-width="3"/><text x="${x}" y="${y + 4.5}">${esc(txt)}</text></g>`; }
+
+function ctxLine(S){
+  if (S.ctx === "bat" && S.att) return `<div class="ctx">${chip(S, S.att.a, "támad")}<span class="vs">⚔</span>${chip(S, S.att.d, "véd")}<span class="note">· ${esc(TILES[S.att.tile].name)}${S.tiles[S.att.tile].towers ? " (vár)" : ""}</span></div>`;
+  if (S.phase === "q" && S.picks && Object.keys(S.picks).length) return `<div class="ctx"><span class="note">Aki jól felel, megkapja:</span>${Object.entries(S.picks).map(([p, t]) => chip(S, +p, "→ " + esc(TILES[t].name))).join("")}</div>`;
+  if (S.phase === "q_res" && S.resPicks) return `<div class="ctx">${Object.entries(S.resPicks).map(([p, r]) => chip(S, +p, (r.ok ? "✓ megkapta: " : "✗ elvesztette: ") + esc(TILES[r.tile].name), r.ok ? "ok" : "bad")).join("")}</div>`;
+  if (S.ctx === "exp" && (S.phase === "tip" || S.phase === "tip_res")) return `<div class="ctx"><span class="note">Aki a legközelebb tippel, választ egy szabad mezőt.</span></div>`;
+  return "";
+}
+function mainHTML(S, me){
+  const ph = S.phase, R = S.reveal;
   if (ph === "end"){
-    return `<div class="tagl">Végeredmény</div><ul class="res">${S.final.map((p, i) => `<li class="${i === 0 ? "win" : ""}"><span class="dot" style="background:${PCOL[p]}"></span>${i + 1}. ${esc(S.players[p].name)}${S.players[p].out ? " (kiesett)" : ""}<span class="v">${score(S, p)}</span></li>`).join("")}</ul>
-      <div class="big" style="margin-top:14px">${esc(S.players[S.final[0]].name)} nyert!</div>
-      ${NET.role !== "client" ? '<div class="row" style="margin-top:12px"><button class="btn pri" id="again">Új játék</button></div>' : '<p class="note">A házigazda indíthat új játékot.</p>'}${logHTML(S)}`;
+    const f = S.final, ord = [f[1], f[0], f[2]].filter(x => x != null), hgt = { [f[0]]:120, [f[1]]:84, [f[2]]:56 };
+    return `<div class="lbl">Végeredmény</div><div class="big">🏆 ${PN(S, f[0])} nyert!</div>
+      <div class="podium">${ord.map(p => `<div class="pod" style="--c:${PCOL[p]}">${av(S, p, "lg")}<div class="nm">${PN(S, p)}</div><div class="sc">${score(S, p)} pont</div><div class="bar" style="height:${hgt[p]}px">${f.indexOf(p) + 1}.</div></div>`).join("")}</div>
+      ${leaderboardHTML(S)}
+      <div style="margin-top:16px">${NET.role !== "client" ? '<button class="btn pri" data-act="again">Új játék</button>' : '<p class="note">A házigazda indíthat új játékot.</p>'}</div>`;
   }
   if (/pick/.test(ph)){
     const mine = S.cur === me;
-    const what = ph === "bat_pick" ? "támad" : "választ mezőt";
-    return `<div class="tagl">${ph === "bat_pick" ? "Támadás" : ph === "tip_pick" ? "A tipp nyertese választ" : "Mezőválasztás"}</div>
-      <p class="q">${mine ? (ph === "bat_pick" ? "Válaszd ki, melyik ellenséges mezőt támadod!" : "Válassz egy szabad mezőt a térképen!") : P(S.cur) + " " + what + "…"}</p>
-      ${mine ? '<p class="note">A kijelölhető mezők szaggatott kerettel látszanak.' + (ph === "bat_pick" ? " Egy vár 3 sikeres ostrom után esik el." : "") + '</p>' : ''}
-      ${ph === "bat_res" ? "" : ""}${logHTML(S)}`;
+    let h = `<div class="lbl">${ph === "bat_pick" ? "Háború · támadás" : ph === "tip_pick" ? "A tipp nyertese választ" : "Terjeszkedés · mezőválasztás"}</div>${qTimer()}`;
+    if (mine) h += `<div class="hint">👆 ${ph === "bat_pick" ? "Te támadsz! Kattints egy ellenséges mezőre a térképen." : "Te jössz! Kattints egy szaggatott keretes mezőre."}</div>${ph === "bat_pick" ? '<p class="note" style="margin-top:10px">A vár 3 sikeres ostrom után esik el, de akkor minden területe a tiéd.</p>' : ""}`;
+    else h += `<div class="qt" style="display:flex;gap:10px;align-items:center">${av(S, S.cur, "lg")}<span>${PN(S, S.cur)} ${ph === "bat_pick" ? "célpontot választ…" : "mezőt választ…"}</span></div>`;
+    if (ph === "exp_pick") h += `<ul class="plan">${S.order.map(p => `<li>${av(S, p, "sm")}${PN(S, p)}${S.picks[p] != null ? `<span class="t">→ ${esc(TILES[S.picks[p]].name)}</span>` : `<span class="w">${S.cur === p ? "most választ" : "vár a sorára"}</span>`}</li>`).join("")}</ul>`;
+    return h;
   }
-  if (ph === "bat_res"){
-    const a = S.att;
-    return `<div class="tagl">Csata</div><p class="q">${a.win === "a" ? P(a.a) + " győzött!" : P(a.d) + " megvédte a területét!"}</p>${logHTML(S)}`;
+  if (ph === "bat_res" && S.att){
+    const a = S.att, w = a.win === "a" ? a.a : a.d, txt = a.msg || "";
+    return `<div class="lbl">Csata eredménye</div><div class="outcome"><div class="ic">${a.win === "a" ? "⚔️" : "🛡️"}</div><div class="big" style="display:flex;gap:10px;align-items:center;justify-content:center">${av(S, w, "lg")}${PN(S, w)}</div><div style="font-weight:600">${esc(txt)}</div></div>`;
   }
   if (ph === "q" || ph === "q_res"){
-    const need = S.need.includes(me), done = ph === "q_res", R = S.reveal;
-    const ctxLine = S.ctx === "bat" ? `${P(S.att.a)} támad, ${P(S.att.d)} véd` : "Aki jól felel, megkapja a kijelölt mezőjét";
-    let h = `<div class="tagl">${esc(S.q.id)} · ${S.ctx === "bat" ? "Csatakérdés" : "Terjeszkedés"}</div><div class="note" style="margin:0 0 8px">${ctxLine}</div><p class="q">${esc(S.q.text)}</p>
-      <div class="opts${done ? " done" : ""}">`;
+    const need = S.need.includes(me), rev = ph === "q_res";
+    let h = `<div class="lbl">${S.ctx === "bat" ? "Csatakérdés" : "Terjeszkedés · kérdés"} · ${esc(S.q.id)}</div>${ctxLine(S)}${rev ? "" : qTimer()}<div class="qt">${esc(S.q.text)}</div><div class="opts${rev ? " rev" : ""}">`;
     S.q.opts.forEach((o, i) => {
-      const who = done ? Object.keys(R.ans).filter(p => R.ans[p].c === i).map(Number) : [];
-      h += `<button class="opt o${i}${UI.mine === i ? " mine" : ""}${done && R.correct === i ? " right" : ""}" data-c="${i}" ${!need || done || UI.mine !== null ? "disabled" : ""}><span class="sh">${"ABCD"[i]}</span><span>${esc(o)}</span><span class="who">${whoDots(S, who)}</span></button>`;
+      const who = rev ? Object.keys(R.ans).filter(p => R.ans[p].c === i).map(Number) : [];
+      const right = rev && R.correct === i, wrong = rev && !right && who.length;
+      let tagx = "";
+      if (right) tagx += '<span class="pill ok">✓ helyes</span>';
+      if (!rev && UI.mine === i) tagx += '<span class="pill me">a te válaszod</span>';
+      h += `<button class="opt${UI.mine === i && !rev ? " mine" : ""}${right ? " right" : ""}${wrong ? " wrong" : ""}" data-c="${i}" ${!need || rev || UI.mine !== null ? "disabled" : ""}>
+        <span class="let l${i}">${"ABCD"[i]}</span><span>${esc(o)}</span>${tagx || who.length ? `<span class="side-r">${tagx}<span class="stack">${who.map(p => av(S, p, "sm")).join("")}</span></span>` : ""}</button>`;
     });
     h += `</div>`;
-    if (!done) h += `<p class="note">${need ? (UI.mine !== null ? "Válasz elküldve, várjuk a többieket…" : "") : "Most csak nézed — ebben a kérdésben nem te játszol."} Válaszolt: ${S.need.filter(p => S.answered[p]).map(p => esc(S.players[p].name)).join(", ") || "még senki"}</p>`;
-    else h += `<ul class="res">${S.need.map(p => `<li><span class="dot" style="background:${PCOL[p]}"></span>${esc(S.players[p].name)}<span class="v">${R.ok[p] ? "✓ jó" : R.ans[p] ? "✗ rossz" : "— nem felelt"}</span></li>`).join("")}</ul><div class="expl">${esc(S.q.expl)}</div>`;
-    return h + logHTML(S);
+    if (!rev) h += `<p class="note" style="margin-top:12px">${need ? (UI.mine !== null ? "Válasz elküldve. A többiek válaszát a végén látod." : "Kattints a szerinted helyes válaszra (vagy 1–4).") : "Ebben a kérdésben nem te játszol — figyeld, ki mit tud."}</p>`;
+    else {
+      h += `<table class="res">${S.need.map(p => { const a = R.ans[p]; return `<tr><td>${av(S, p, "sm")}</td><td>${PN(S, p)}</td><td class="r">${a ? "ABCD"[a.c] + " · " + (a.t / 1000).toFixed(1).replace(".", ",") + " s" : "—"}</td><td class="r ${R.ok[p] ? "ok" : "bad"}">${R.ok[p] ? "✓ jó" : a ? "✗ rossz" : "✗ nem felelt"}</td></tr>`; }).join("")}</table>`;
+      h += `<div class="expl"><b>Helyes: ${"ABCD"[R.correct]}.</b> ${esc(S.q.expl)}</div>`;
+    }
+    return h;
   }
   if (ph === "tip" || ph === "tip_res"){
-    const need = S.need.includes(me), R = S.reveal;
-    let h = `<div class="tagl">Tippkérdés${S.ctx === "bat" ? " · döntetlen a csatában" : " · a legközelebbi választ mezőt"}</div><p class="q">${esc(S.q.text)}</p>`;
+    const need = S.need.includes(me);
+    let h = `<div class="lbl">Tippkérdés${S.ctx === "bat" ? " · döntetlen csata" : ""}</div>${ctxLine(S)}${ph === "tip" ? qTimer() : ""}<div class="qt">${esc(S.q.text)}</div>`;
     if (ph === "tip"){
-      if (need && !UI.tipSent) h += `<form id="tipf" class="row"><input type="number" step="any" id="tipv" inputmode="decimal" placeholder="Tipp (${esc(S.q.unit)})" style="max-width:220px" autocomplete="off"><button class="btn pri">Küldés</button></form>`;
-      h += `<p class="note">${need ? (UI.tipSent ? "Tipp elküldve…" : "Minél közelebb, annál jobb. Egyenlőségnél a gyorsabb nyer.") : "Most csak nézed."} Tippelt: ${S.need.filter(p => S.answered[p]).map(p => esc(S.players[p].name)).join(", ") || "még senki"}</p>`;
+      if (need && !UI.tipSent) h += `<form class="tipf" id="tipf" novalidate><div class="wrapi"><input class="inp" type="text" inputmode="decimal" id="tipv" autocomplete="off" placeholder="Tipp"><span class="unit">${esc(S.q.unit)}</span></div><button class="btn pri" type="submit">Küldés</button></form><div class="err" id="tiperr"></div><p class="note">Tizedesvessző is jó (pl. 22,7). Egyenlő eltérésnél a gyorsabb nyer.</p>`;
+      else if (need) h += `<div class="sent">✓ Tipped elküldve: ${esc(num(UI.myTip))} ${esc(S.q.unit)} — várjuk a többieket…</div>`;
+      else h += `<p class="note">Most a többiek tippelnek — figyeld, ki lesz közelebb.</p>`;
     } else {
-      h += `<div class="big">${fmt(R.v)} <span style="font-size:18px">${esc(S.q.unit)}</span></div><ul class="res">${R.rank.map((p, i) => `<li class="${i === 0 ? "win" : ""}"><span class="dot" style="background:${PCOL[p]}"></span>${esc(S.players[p].name)}<span class="v">${R.ans[p] ? fmt(R.ans[p].v) + " · " + (R.ans[p].t / 1000).toFixed(1) + " s" : "—"}</span></li>`).join("")}</ul>`;
+      h += `<div class="truth"><b>${esc(num(R.v))}</b><span>${esc(S.q.unit)} · a helyes válasz</span></div>${numLine(S)}`;
+      h += `<ol class="rank">${R.rank.map((p, k) => { const a = R.ans[p]; const d = a ? a.v - R.v : null; return `<li class="${k === 0 ? "w" : ""}"><span class="pos">${k === 0 ? "🏆" : k + 1 + "."}</span>${av(S, p, "sm")}<span>${PN(S, p)}</span><span class="v">${a ? esc(num(a.v)) : "—"}</span><span class="d">${a ? (d === 0 ? "telitalálat" : (d > 0 ? "+" : "−") + num(Math.abs(d))) + " · " + (a.t / 1000).toFixed(1).replace(".", ",") + " s" : "nem tippelt"}</span></li>`; }).join("")}</ol>`;
     }
-    return h + logHTML(S);
+    return h;
   }
-  return logHTML(S);
+  return `<div class="note">…</div>`;
 }
-function logHTML(S){ return `<div class="log">${S.log.slice(0, 8).map(l => `<div>${esc(l)}</div>`).join("")}</div>`; }
-function wire(S, me){
-  document.querySelectorAll(".hex.click").forEach(el => el.onclick = () => act({ type:"pick", tile:+el.dataset.t }));
-  document.querySelectorAll(".opt:not([disabled])").forEach(el => el.onclick = () => { UI.mine = +el.dataset.c; act({ type:"ans", c:UI.mine }); draw(); });
-  const f = $("#tipf"); if (f){ const i = $("#tipv"); i.focus({ preventScroll:true }); f.onsubmit = e => { e.preventDefault(); const v = parseFloat(String(i.value).replace(",", ".")); if (!isFinite(v)) return; UI.tipSent = true; act({ type:"tip", v }); draw(); }; }
-  const ag = $("#again"); if (ag) ag.onclick = () => {
-    if (NET.role === "solo"){ hostInit(H.S.players[0].name); hostStart(); return; }
-    const S = H.S, ps = [{ name:S.players[0].name, bot:false }], nc = {};
-    for (const k in H.conns){ if (S.players[k].bot) continue; const i = ps.length; ps.push({ name:S.players[k].name, bot:false }); nc[i] = H.conns[k]; nc[i].send({ t:"welcome", pid:i }); }
-    H.conns = nc; S.players = ps; S.tiles = []; S.picks = {}; S.log = []; S.att = null; S.q = null;
-    setPhase("lobby", 0); push();
-  };
+function numLine(S){
+  const R = S.reveal, ps = R.rank.filter(p => R.ans[p]);
+  const vals = ps.map(p => R.ans[p].v).concat([R.v]);
+  let lo = Math.min(...vals), hi = Math.max(...vals); if (lo === hi){ lo -= 1; hi += 1; }
+  const pad = (hi - lo) * .1; lo -= pad; hi += pad;
+  const W = 520, X = v => 24 + (v - lo) / (hi - lo) * (W - 48);
+  const items = ps.map(p => ({ p, x: X(R.ans[p].v) })).sort((a, b) => a.x - b.x);
+  let lane = [], last = -1e9, ln = 0; items.forEach(it => { ln = it.x - last < 34 ? ln + 1 : 0; it.l = ln; last = it.x; });
+  const maxl = Math.max(0, ...items.map(i => i.l)), H = 104 + maxl * 34, ax = 46;
+  let g = `<line x1="16" x2="${W - 16}" y1="${ax}" y2="${ax}" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/>`;
+  const tx = X(R.v);
+  g += `<line x1="${tx}" x2="${tx}" y1="14" y2="${H - 6}" stroke="var(--ok)" stroke-width="3" stroke-dasharray="4 4"/><rect x="${tx - 34}" y="2" width="68" height="20" rx="6" fill="var(--ok)"/><text x="${tx}" y="16" text-anchor="middle" font-family="var(--mono)" font-size="12" font-weight="700" fill="#fff">${esc(num(R.v))}</text>`;
+  items.forEach(it => {
+    const y = ax + 28 + it.l * 34, a = R.ans[it.p];
+    g += `<line x1="${it.x}" x2="${it.x}" y1="${ax}" y2="${y - 13}" stroke="${PCOL[it.p]}" stroke-width="2"/><circle cx="${it.x}" cy="${ax}" r="5" fill="${PCOL[it.p]}"/>`;
+    g += `<circle cx="${it.x}" cy="${y}" r="13" fill="${PCOL[it.p]}" stroke="var(--panel)" stroke-width="3"/><text x="${it.x}" y="${y + 4.5}" text-anchor="middle" font-family="var(--disp)" font-weight="700" font-size="13" fill="#fff">${esc(ini(S.players[it.p].name))}</text>`;
+    g += `<text x="${it.x + (it.x > W - 80 ? -18 : 18)}" y="${y + 4.5}" text-anchor="${it.x > W - 80 ? "end" : "start"}" font-family="var(--mono)" font-size="12" font-weight="600" fill="var(--ink)">${esc(num(a.v))}</text>`;
+  });
+  return `<svg class="nl" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tippek számegyenesen">${g}</svg>`;
+}
+function qTimer(){ return UI.dl ? `<div class="qtimer"><div class="qbar"><i id="qbar"></i></div><span id="qcd"></span></div>` : ""; }
+function onMainClick(e){
+  const o = e.target.closest(".opt[data-c]");
+  if (o && !o.disabled){ UI.mine = +o.dataset.c; act({ type:"ans", c:UI.mine }); draw(); return; }
+  const ag = e.target.closest("[data-act=again]");
+  if (ag) newGame();
+}
+function onTipSubmit(e){
+  e.preventDefault();
+  const i = $("#tipv"); if (!i) return;
+  const raw = String(i.value).trim().replace(/\s/g, "").replace(",", ".");
+  const v = parseFloat(raw);
+  if (!raw || !isFinite(v)){ const er = $("#tiperr"); if (er) er.textContent = "Írj be egy számot (pl. 1885 vagy 22,7)."; i.focus(); return; }
+  UI.tipSent = true; UI.myTip = v; act({ type:"tip", v }); draw();
+}
+function newGame(){
+  if (NET.role === "solo"){ hostInit(H.S.players[0].name); hostStart(); return; }
+  const S = H.S, ps = [{ name:S.players[0].name, bot:false }], nc = {};
+  for (const k in H.conns){ if (S.players[k].bot) continue; const i = ps.length; ps.push({ name:S.players[k].name, bot:false }); nc[i] = H.conns[k]; nc[i].send({ t:"welcome", pid:i }); }
+  H.conns = nc; S.players = ps; S.tiles = []; S.picks = {}; S.log = []; S.att = null; S.q = null; S.resPicks = null;
+  setPhase("lobby", 0); push();
 }
 function tick(){
-  const el = $("#cd"); if (!el) return;
-  if (!UI.dl){ el.textContent = ""; return; }
-  const s = Math.max(0, Math.ceil((UI.dl - Date.now()) / 1000));
-  el.textContent = s ? s + " s" : ""; el.classList.toggle("low", s <= 5);
+  const qb = $("#qbar"), qc = $("#qcd"), qt = $(".qtimer");
+  if (qb && UI.dl){ const ms = Math.max(0, UI.dl - Date.now()), s = Math.ceil(ms / 1000); qb.style.width = (UI.dur ? Math.min(100, ms / UI.dur * 100) : 0) + "%"; qc.textContent = s + " s"; qt.classList.toggle("low", s <= 5); }
+  const el = $("#cd"), ring = $("#ring"), tm = $("#tmr"); if (!el) return;
+  if (!UI.dl){ el.textContent = ""; tm && tm.classList.add("idle"); return; }
+  tm && tm.classList.remove("idle");
+  const ms = Math.max(0, UI.dl - Date.now()), s = Math.ceil(ms / 1000);
+  el.textContent = s || "";
+  if (ring) ring.setAttribute("stroke-dasharray", (UI.dur ? Math.min(100, ms / UI.dur * 100) : 0).toFixed(1) + " 100");
+  tm && tm.classList.toggle("low", s <= 5 && s > 0);
 }
 setInterval(tick, 250);
 document.addEventListener("keydown", e => {
