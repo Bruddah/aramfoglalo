@@ -9,23 +9,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F3F0E8; --bg2:#E9E5DA; --panel:#FFFFFF; --panel2:#F1EDE3; --line:#15161A; --line2:#C9C4B6; --ink:#15161A; --muted:#5A5E68;
-  --accent:#FFD23F; --accent-ink:#15161A; --accent-sh:#B8901A; --ok:#138A55; --ok-soft:#DDF3E7; --bad:#D7263D; --bad-soft:#FBE1E4;
-  --p0:#F0532F; --p1:#2A6FE0; --p2:#8F55E8; --hexfree:#DDD8CC; --hexline:#FFFFFF; --hexink:#5A5E68; --tile-ink:#FFFFFF;
-  --sh:0 5px 0 #15161A; --sh-sm:0 3px 0 #15161A; --border:2px solid #15161A;
+  --bg:#160F3D; --bg2:#1E1650; --panel:#241A5C; --panel2:#2F2470; --line:#3B2F85; --line2:#4C3F9E; --ink:#FFFFFF; --muted:#B9B0EC;
+  --accent:#FFD23F; --accent-ink:#160F3D; --accent-sh:#B8901A; --ok:#3EE08F; --ok-soft:#17463F; --bad:#FF4D6D; --bad-soft:#4A1E4F;
+  --p0:#FF8A3D; --p1:#2EC5FF; --p2:#FF5FB0; --hexfree:#33287A; --hexline:#241A5C; --hexink:#B9B0EC; --tile-ink:#160F3D;
+  --sh:0 6px 0 #0B0726; --sh-sm:0 4px 0 #0B0726; --border:2px solid #3B2F85;
   --sans:Manrope,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace; --disp:Unbounded,system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#101114; --bg2:#16181D; --panel:#1A1C22; --panel2:#23262E; --line:#2C2F37; --line2:#3A3E48; --ink:#F4F1EA; --muted:#A9ADB8;
-  --accent:#FFD23F; --accent-ink:#101114; --accent-sh:#B8901A; --ok:#39D98A; --ok-soft:#16301F; --bad:#FF4D6D; --bad-soft:#3A1820;
-  --p0:#FF6B4A; --p1:#3D8BFF; --p2:#B47CFF; --hexfree:#2A2D35; --hexline:#1A1C22; --hexink:#A9ADB8; --tile-ink:#101114;
-  --sh:0 6px 0 #07080A; --sh-sm:0 4px 0 #07080A; --border:2px solid #2C2F37;
+  --bg:#160F3D; --bg2:#1E1650; --panel:#241A5C; --panel2:#2F2470; --line:#3B2F85; --line2:#4C3F9E; --ink:#FFFFFF; --muted:#B9B0EC;
+  --accent:#FFD23F; --accent-ink:#160F3D; --accent-sh:#B8901A; --ok:#3EE08F; --ok-soft:#17463F; --bad:#FF4D6D; --bad-soft:#4A1E4F;
+  --p0:#FF8A3D; --p1:#2EC5FF; --p2:#FF5FB0; --hexfree:#33287A; --hexline:#241A5C; --hexink:#B9B0EC; --tile-ink:#160F3D;
+  --sh:0 6px 0 #0B0726; --sh-sm:0 4px 0 #0B0726; --border:2px solid #3B2F85;
 }}
 :root[data-theme="dark"]{
-  --bg:#101114; --bg2:#16181D; --panel:#1A1C22; --panel2:#23262E; --line:#2C2F37; --line2:#3A3E48; --ink:#F4F1EA; --muted:#A9ADB8;
-  --accent:#FFD23F; --accent-ink:#101114; --accent-sh:#B8901A; --ok:#39D98A; --ok-soft:#16301F; --bad:#FF4D6D; --bad-soft:#3A1820;
-  --p0:#FF6B4A; --p1:#3D8BFF; --p2:#B47CFF; --hexfree:#2A2D35; --hexline:#1A1C22; --hexink:#A9ADB8; --tile-ink:#101114;
-  --sh:0 6px 0 #07080A; --sh-sm:0 4px 0 #07080A; --border:2px solid #2C2F37;
+  --bg:#160F3D; --bg2:#1E1650; --panel:#241A5C; --panel2:#2F2470; --line:#3B2F85; --line2:#4C3F9E; --ink:#FFFFFF; --muted:#B9B0EC;
+  --accent:#FFD23F; --accent-ink:#160F3D; --accent-sh:#B8901A; --ok:#3EE08F; --ok-soft:#17463F; --bad:#FF4D6D; --bad-soft:#4A1E4F;
+  --p0:#FF8A3D; --p1:#2EC5FF; --p2:#FF5FB0; --hexfree:#33287A; --hexline:#241A5C; --hexink:#B9B0EC; --tile-ink:#160F3D;
+  --sh:0 6px 0 #0B0726; --sh-sm:0 4px 0 #0B0726; --border:2px solid #3B2F85;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -37,8 +37,8 @@ button,input{font:inherit;color:inherit}
 .logo svg{width:30px;height:33px}
 .btn{border:var(--border);background:var(--panel2);border-radius:14px;padding:0 20px;min-height:48px;font:800 16px var(--sans);cursor:pointer;box-shadow:var(--sh-sm);transition:transform .08s,box-shadow .08s}
 .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
-.btn.pri{background:var(--accent);color:var(--accent-ink);border:2px solid #15161A;box-shadow:0 4px 0 var(--accent-sh)}
-.btn.blue{background:var(--p1);color:#101114;border:2px solid #15161A;box-shadow:0 4px 0 color-mix(in srgb,var(--p1) 55%,#000)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border:2px solid #160F3D;box-shadow:0 4px 0 var(--accent-sh)}
+.btn.blue{background:var(--p1);color:#160F3D;border:2px solid #160F3D;box-shadow:0 4px 0 color-mix(in srgb,var(--p1) 55%,#000)}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .inp{font:700 19px var(--sans);padding:13px 15px;border:var(--border);border-radius:14px;background:var(--panel);color:var(--ink);width:100%;box-shadow:var(--sh-sm)}
@@ -48,7 +48,7 @@ button,input{font:inherit;color:inherit}
 .note{font-size:14.5px;color:var(--muted);font-weight:600}
 .err{color:var(--bad);font-size:14.5px;font-weight:700;margin-top:10px;min-height:1.2em}
 /* avatars: rounded squares, dark letter */
-.av{--c:var(--p0);display:inline-grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;background:var(--c);color:#101114;font:800 13px/1 var(--disp)}
+.av{--c:var(--p0);display:inline-grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;background:var(--c);color:#160F3D;font:800 13px/1 var(--disp)}
 .av.lg{width:44px;height:44px;border-radius:13px;font-size:19px}
 .av.sm{width:24px;height:24px;border-radius:7px;font-size:11px}
 .stack{display:inline-flex;gap:3px}
@@ -59,7 +59,6 @@ button,input{font:inherit;color:inherit}
 .hero-l{flex:1 1 480px;min-width:0;display:flex;flex-direction:column;gap:20px}
 .hero h1{margin:0;font:800 clamp(36px,5.2vw,58px)/1.05 var(--disp);letter-spacing:-.01em}
 .hero h1 span{color:var(--accent)}
-:root:not([data-theme="dark"]) .hero h1 span{color:inherit;background:var(--accent);padding:0 .12em;border-radius:8px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hero h1 span{background:none;color:var(--accent);padding:0}}
 .hero p{margin:0;font-size:18px;line-height:1.55;color:var(--muted);max-width:34em;font-weight:600}
 .namebox{max-width:380px}
@@ -69,16 +68,16 @@ button,input{font:inherit;color:inherit}
 .mode{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:12px;padding:26px}
 .mode h2{margin:0;font:800 23px var(--disp)}
 .mode p{margin:0;font-size:16px;line-height:1.5;color:var(--muted);font-weight:600}
-.mode.y{background:var(--accent);color:#101114;border:2px solid #15161A;box-shadow:0 8px 0 var(--accent-sh)}
-.mode.y p{color:#101114}
-.mode.y .btn{background:#101114;color:var(--accent);border-color:#101114;box-shadow:none}
+.mode.y{background:var(--accent);color:#160F3D;border:2px solid #160F3D;box-shadow:0 8px 0 var(--accent-sh)}
+.mode.y p{color:#160F3D}
+.mode.y .btn{background:#160F3D;color:var(--accent);border-color:#160F3D;box-shadow:none}
 .mode .act{margin-top:auto}
 .rules{display:flex;flex-wrap:wrap;gap:16px}
 .rule{flex:1 1 250px;min-width:0;border-top:4px solid var(--c);padding-top:14px;font-size:15px;line-height:1.5;color:var(--muted);font-weight:600}
 .rule b{display:block;font:700 13px var(--mono);color:var(--c);margin-bottom:4px;letter-spacing:.04em}
 .code{font:800 50px/1 var(--mono);letter-spacing:.2em;color:var(--ink)}
-.codebox{display:inline-block;background:var(--accent);color:#101114;border:2px solid #15161A;border-radius:16px;padding:12px 18px;box-shadow:0 5px 0 var(--accent-sh)}
-.codebox .code{color:#101114}
+.codebox{display:inline-block;background:var(--accent);color:#160F3D;border:2px solid #160F3D;border-radius:16px;padding:12px 18px;box-shadow:0 5px 0 var(--accent-sh)}
+.codebox .code{color:#160F3D}
 .plist{list-style:none;padding:0;margin:16px 0}
 .plist li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:2px solid var(--panel2);font-weight:800;font-size:17px}
 .tag{font:700 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:6px;border:2px solid var(--line2);color:var(--muted)}
@@ -86,10 +85,10 @@ button,input{font:inherit;color:inherit}
 .g-head{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
 .steps{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
 .step{display:flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:var(--panel);border:var(--border);font:800 13.5px var(--sans);color:var(--muted)}
-.step.on{color:var(--accent-ink);background:var(--accent);border-color:#15161A}
+.step.on{color:var(--accent-ink);background:var(--accent);border-color:#160F3D}
 .step i{display:flex;gap:3px}.step i b{width:8px;height:8px;border-radius:2px;background:var(--line2)}
 .step i b.f{background:currentColor}
-.step.on i b{background:rgba(0,0,0,.25)} .step.on i b.f{background:#101114}
+.step.on i b{background:rgba(0,0,0,.25)} .step.on i b.f{background:#160F3D}
 .timer{position:relative;width:52px;height:52px;flex:none}
 .timer svg{width:52px;height:52px;transform:rotate(-90deg)}
 .timer .trk{fill:none;stroke:var(--panel2);stroke-width:5}
@@ -106,7 +105,7 @@ button,input{font:inherit;color:inherit}
 .sl{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;white-space:nowrap}
 .seg.on .sl{color:var(--ink)}
 .ss{display:flex;gap:5px;align-items:center}
-.st{--c:var(--line2);position:relative;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--c);color:#101114;font:800 12px/1 var(--sans)}
+.st{--c:var(--line2);position:relative;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--c);color:#160F3D;font:800 12px/1 var(--sans)}
 .st.qq{background:transparent;color:var(--muted);border:2px solid var(--line2);font:700 12px var(--mono);width:auto;min-width:26px;padding:0 6px;gap:3px;display:inline-flex;align-items:center;justify-content:center}
 .st.qq small{font:700 10.5px var(--mono)}
 .st.att::after{content:"";position:absolute;right:-4px;bottom:-4px;width:12px;height:12px;border-radius:4px;background:var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D7263D' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M5 5l14 14M19 5L5 19'/%3E%3C/svg%3E") center/9px no-repeat}
@@ -115,7 +114,7 @@ button,input{font:inherit;color:inherit}
 .st.qq.done{background:transparent}.st.qq.done::before{color:var(--ok)}
 .st.skip{opacity:.25}
 .st.now{box-shadow:0 0 0 3px var(--panel),0 0 0 5px var(--accent);animation:nowp 1.2s ease-in-out infinite}
-.st.qq.now{background:var(--accent);color:#101114;border-color:#15161A}
+.st.qq.now{background:var(--accent);color:#160F3D;border-color:#160F3D}
 @keyframes nowp{50%{box-shadow:0 0 0 3px var(--panel),0 0 0 7px color-mix(in srgb,var(--accent) 45%,transparent)}}
 .st.me{outline:2px solid var(--ink);outline-offset:1px}
 .seg.fin .eta{font:800 13px var(--sans);color:var(--ink);white-space:nowrap;margin-left:4px}
@@ -125,7 +124,7 @@ button,input{font:inherit;color:inherit}
 .pcard.turn{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset,var(--sh)}
 .pcard.out{opacity:.45;filter:grayscale(.7)}
 .pname{font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pname em{font:700 10.5px var(--mono);font-style:normal;text-transform:uppercase;letter-spacing:.06em;margin-left:7px;padding:2px 6px;border-radius:6px;background:var(--c);color:#101114;vertical-align:2px}
+.pname em{font:700 10.5px var(--mono);font-style:normal;text-transform:uppercase;letter-spacing:.06em;margin-left:7px;padding:2px 6px;border-radius:6px;background:var(--c);color:#160F3D;vertical-align:2px}
 .pmeta{display:flex;gap:10px;align-items:center;font:600 12.5px var(--mono);color:var(--muted)}
 .tw{display:inline-flex;gap:3px}.tw i{width:9px;height:12px;border-radius:2px;background:var(--line2)}.tw i.on{background:var(--c)}
 .pscore{font:800 28px/1 var(--disp);text-align:right}
@@ -133,7 +132,7 @@ button,input{font:inherit;color:inherit}
 .pst{grid-column:1/-1;font:800 13.5px var(--sans);padding:7px 10px;border-radius:10px;background:var(--panel2);color:var(--muted);display:flex;gap:7px;align-items:center;min-height:34px}
 .pst.ok{background:var(--ok-soft);color:var(--ok)} .pst.bad{background:var(--bad-soft);color:var(--bad)}
 .pst.act{background:color-mix(in srgb,var(--c) 20%,var(--panel2));color:var(--ink)}
-.pst.win{background:var(--accent);color:#101114}
+.pst.win{background:var(--accent);color:#160F3D}
 .pst.wait::before,.pst.act::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.25}}
 .banner{padding:12px 16px;border-radius:14px;margin-bottom:12px;font-weight:800}
@@ -154,7 +153,7 @@ g.cl:hover .hx{filter:brightness(1.12)}
 .tn{font:800 11.5px var(--sans);text-anchor:middle;pointer-events:none}
 .tv{font:700 13.5px var(--mono);text-anchor:middle;pointer-events:none}
 .bdg{pointer-events:none}
-.bdg text{font:800 12.5px var(--sans);text-anchor:middle;fill:#101114}
+.bdg text{font:800 12.5px var(--sans);text-anchor:middle;fill:#160F3D}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;font-weight:700;color:var(--muted);padding:12px 4px 0}
 .legend span{display:inline-flex;gap:7px;align-items:center}
 .legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
@@ -167,7 +166,7 @@ g.cl:hover .hx{filter:brightness(1.12)}
 .vs{display:inline-flex}
 .qt{font:800 clamp(20px,2.2vw,27px)/1.3 var(--sans);margin:4px 0 18px}
 .qtimer{display:flex;align-items:center;gap:14px;margin:0 0 16px}
-.qnum{flex:none;width:62px;height:62px;border-radius:18px;background:var(--accent);color:#101114;font:800 28px var(--disp);display:grid;place-items:center;box-shadow:0 5px 0 var(--accent-sh);border:2px solid #15161A}
+.qnum{flex:none;width:62px;height:62px;border-radius:18px;background:var(--accent);color:#160F3D;font:800 28px var(--disp);display:grid;place-items:center;box-shadow:0 5px 0 var(--accent-sh);border:2px solid #160F3D}
 .qbar{flex:1;height:16px;border-radius:9px;background:var(--panel2);border:var(--border);overflow:hidden}
 .qbar i{display:block;height:100%;width:100%;border-radius:6px;background:var(--accent);transition:width .25s linear}
 .qtimer.low .qnum{background:var(--bad);color:#fff;box-shadow:0 5px 0 color-mix(in srgb,var(--bad) 55%,#000);animation:shake .5s infinite}
@@ -190,7 +189,7 @@ g.cl:hover .hx{filter:brightness(1.12)}
 .opt .side-r{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .opt .ptag{position:absolute;top:-12px;right:12px}
 .pill{font:800 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap}
-.pill.ok{background:var(--ok);color:#fff}.pill.me{background:var(--accent);color:#101114}
+.pill.ok{background:var(--ok);color:#fff}.pill.me{background:var(--accent);color:#160F3D}
 .res{width:100%;border-collapse:collapse;margin-top:16px;font-size:15px;font-weight:700}
 .res td{padding:9px 6px;border-top:2px solid var(--panel2)}
 .res td:first-child{width:34px}
@@ -218,24 +217,24 @@ svg.nl{width:100%;height:auto;display:block}
 .rank .v{font:800 20px var(--disp)}
 .rank .d{font:600 12.5px var(--mono);color:var(--muted);text-align:right;min-width:10ch}
 .big{font:800 clamp(26px,3.4vw,36px)/1.1 var(--disp);margin:6px 0}
-.hint{display:flex;gap:12px;align-items:center;padding:18px;border-radius:16px;background:var(--accent);color:#101114;font-weight:800;font-size:18px;border:2px solid #15161A;box-shadow:0 5px 0 var(--accent-sh)}
+.hint{display:flex;gap:12px;align-items:center;padding:18px;border-radius:16px;background:var(--accent);color:#160F3D;font-weight:800;font-size:18px;border:2px solid #160F3D;box-shadow:0 5px 0 var(--accent-sh)}
 .waitp{display:flex;gap:14px;align-items:center;font:800 22px var(--sans)}
 .plan{list-style:none;padding:0;margin:16px 0 0}
 .plan li{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:2px solid var(--panel2);font-size:15px;font-weight:700}
 .plan li .t{margin-left:auto;font-weight:800}
 .plan li .w{margin-left:auto;color:var(--muted)}
 .outcome{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:12px 0}
-.outcome .ic{width:72px;height:72px;border-radius:20px;display:grid;place-items:center;border:2px solid #15161A}
+.outcome .ic{width:72px;height:72px;border-radius:20px;display:grid;place-items:center;border:2px solid #160F3D}
 .outcome .ic.a{background:var(--bad)} .outcome .ic.d{background:var(--p1)}
 .outcome .msg{font-weight:800;font-size:18px}
-.win-card{background:var(--accent);color:#101114;border:2px solid #15161A;border-radius:22px;padding:22px;box-shadow:0 6px 0 var(--accent-sh)}
-.win-card .lbl{color:#101114}
+.win-card{background:var(--accent);color:#160F3D;border:2px solid #160F3D;border-radius:22px;padding:22px;box-shadow:0 6px 0 var(--accent-sh)}
+.win-card .lbl{color:#160F3D}
 .win-card h2{margin:0;font:800 clamp(30px,3.6vw,42px)/1.05 var(--disp);display:flex;gap:14px;align-items:center}
 .podium{display:flex;gap:10px;align-items:flex-end;margin-top:18px}
 .pod{flex:1;text-align:center;min-width:0}
 .pod .nm{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pod .sc{font:700 12.5px var(--mono)}
-.pod .bar{border:2px solid #15161A;border-radius:14px 14px 4px 4px;background:var(--c);color:#101114;font:800 26px var(--disp);display:grid;place-items:center;margin-top:8px}
+.pod .bar{border:2px solid #160F3D;border-radius:14px 14px 4px 4px;background:var(--c);color:#160F3D;font:800 26px var(--disp);display:grid;place-items:center;margin-top:8px}
 .logbox{background:var(--panel);border:var(--border);border-radius:18px;padding:14px 18px;box-shadow:var(--sh-sm)}
 .logbox ol{list-style:none;padding:0;margin:4px 0 0;font-size:14px;color:var(--muted);font-weight:600}
 .logbox li{padding:5px 0;border-top:2px solid var(--panel2)}
@@ -253,7 +252,7 @@ svg.nl{width:100%;height:auto;display:block}
 .lb-stats span{background:var(--panel);border-radius:12px;padding:9px 10px;font-size:12.5px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:1px}
 .lb-stats b{color:var(--ink);font:800 17px var(--mono)}
 .lb-aw{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.aw{font:800 12.5px var(--sans);padding:4px 12px;border-radius:999px;background:var(--accent);color:#101114}
+.aw{font:800 12.5px var(--sans);padding:4px 12px;border-radius:999px;background:var(--accent);color:#160F3D}
 @media (max-width:760px){
   .mapbox{position:static}
   .lb-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -281,6 +280,30 @@ svg.nl{width:100%;height:auto;display:block}
   .tipf .btn{flex:1 1 100%}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* --- vivid answer tiles --- */
+.opts{gap:16px;padding-top:6px}
+.opt{flex:1 1 240px;border:0;border-radius:20px;padding:18px;min-height:96px;gap:16px;color:#fff;font:800 18.5px/1.25 var(--sans);background:var(--obg);box-shadow:0 7px 0 var(--osh);transition:transform .08s,opacity .2s,box-shadow .08s}
+.opt.o0{--obg:#E8344E;--osh:#A51D33}.opt.o1{--obg:#2F6BFF;--osh:#1D46B8}.opt.o2{--obg:#FFB020;--osh:#B87700;color:#160F3D}.opt.o3{--obg:#0E9F57;--osh:#076B39}
+.opt:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 10px 0 var(--osh)}
+.opt:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 var(--osh)}
+.let,.let.l0,.let.l1,.let.l2,.let.l3{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.22)}
+.o2 .let{background:rgba(22,15,61,.14)}
+.o2 .let svg *{fill:#160F3D}
+.let svg{width:24px;height:24px}
+.let b{position:static;display:none}
+.opt .ltr{position:absolute;top:9px;right:14px;font:700 12px var(--mono);opacity:.75}
+.opt.mine,.opt.right,.opt.wrong{border:0;padding:18px;background:var(--obg);box-shadow:0 7px 0 var(--osh)}
+.opt.mine{outline:4px solid #fff;outline-offset:4px}
+.opts.picked .opt:not(.mine){opacity:.5}
+.opt .ptag{position:absolute;top:-16px;left:18px;right:auto;background:#fff;color:#160F3D;border-radius:8px;padding:4px 9px;box-shadow:0 3px 0 #0B0726}
+.opts.rev .opt{opacity:.35}
+.opts.rev .opt.right{opacity:1;outline:4px solid var(--ok);outline-offset:4px}
+.opts.rev .opt.wrong{opacity:.85;outline:4px dashed var(--bad);outline-offset:4px}
+.opt .pill.ok{background:var(--ok);color:#0B3D24}
+.opt .side-r .av{box-shadow:0 0 0 2px #fff}
+.qt{font-size:clamp(20px,2.2vw,26px)}
+@media (max-width:560px){.opt{min-height:70px;padding:12px 14px;font-size:16.5px;border-radius:18px}.opt.mine,.opt.right,.opt.wrong{padding:12px 14px}.let,.let.l0,.let.l1,.let.l2,.let.l3{width:44px;height:44px}}
 </style>
 </head>
 <body>
@@ -657,7 +680,7 @@ function num(v){ const r = Math.abs(v) >= 100 ? Math.round(v * 10) / 10 : Math.r
 function isWar(S){ return S.phase.startsWith("bat") || (S.ctx === "bat" && ["q","q_res","tip","tip_res"].includes(S.phase)); }
 
 /* ---------- icons ---------- */
-const LOGO = `<svg viewBox="0 0 40 44" aria-hidden="true"><polygon points="20,2 38,12 38,32 20,42 2,32 2,12" fill="#FFD23F" stroke="#15161A" stroke-width="2"/><path d="M22 9 L13 24 H20 L17 35 L27 19 H20 Z" fill="#101114"/></svg>`;
+const LOGO = `<svg viewBox="0 0 40 44" aria-hidden="true"><polygon points="20,2 38,12 38,32 20,42 2,32 2,12" fill="#FFD23F" stroke="#160F3D" stroke-width="2"/><path d="M22 9 L13 24 H20 L17 35 L27 19 H20 Z" fill="#160F3D"/></svg>`;
 const IC = {
   crown: (s, c) => `<svg class="ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${c}" aria-hidden="true"><path d="M3 18 L4.5 7 L9 11 L12 4 L15 11 L19.5 7 L21 18 Z"/><rect x="3" y="19" width="18" height="2.4" rx="1"/></svg>`,
   swords: (s, c) => `<svg class="ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/><path d="M9.5 6.5 13 3h3v3l-3.5 3.5"/><path d="M5 14l4 4M7 17l-3 3"/></svg>`,
@@ -680,8 +703,8 @@ function heroSVG(){
   TILES.forEach(t => { const o = own[t.id]; g += `<polygon points="${hexPts(t.x, t.y)}" fill="${o == null ? "var(--hexfree)" : PCOL[o]}" stroke="var(--panel)" stroke-width="6"/>`; });
   const bp = TILES[2];
   g += `<polygon points="${hexPts(bp.x, bp.y)}" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="9 6"/>`;
-  CASTLES.forEach(c => { const t = TILES[c]; g += `<path transform="translate(${t.x},${t.y + 4})" d="M-14 10v-16h5v5h4v-5h10v5h4v-5h5v16z" fill="#101114"/>`; });
-  TILES.forEach(t => { if (CASTLES.includes(t.id)) return; const o = own[t.id]; g += `<text class="tn" x="${t.x}" y="${t.y + 4}" fill="${o == null ? (t.id === 2 ? "var(--ink)" : "var(--hexink)") : "#101114"}">${esc(t.name)}</text>`; });
+  CASTLES.forEach(c => { const t = TILES[c]; g += `<path transform="translate(${t.x},${t.y + 4})" d="M-14 10v-16h5v5h4v-5h10v5h4v-5h5v16z" fill="#160F3D"/>`; });
+  TILES.forEach(t => { if (CASTLES.includes(t.id)) return; const o = own[t.id]; g += `<text class="tn" x="${t.x}" y="${t.y + 4}" fill="${o == null ? (t.id === 2 ? "var(--ink)" : "var(--hexink)") : "#160F3D"}">${esc(t.name)}</text>`; });
   return `<div class="panel"><svg viewBox="0 -6 ${VW} ${VH + 6}" role="img" aria-label="Magyarország hatszögekből: három játékos területei">${g}</svg>
     <div class="legend"><span><i style="background:var(--p0)"></i>1. játékos</span><span><i style="background:var(--p1)"></i>2. játékos</span><span><i style="background:var(--p2)"></i>3. játékos</span><span><i style="border:2px dashed var(--accent);box-sizing:border-box"></i>jelölt mező</span></div></div>`;
 }
@@ -699,7 +722,7 @@ function home(){
     <div class="hero-r">${heroSVG()}</div>
   </section>
   <section class="modes">
-    <div class="mode y"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#101114" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18.5 14.8c1.7.8 2.7 2.5 3 5.2"/></svg>
+    <div class="mode y"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#160F3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18.5 14.8c1.7.8 2.7 2.5 3 5.2"/></svg>
       <h2>Online szoba</h2><p>4 betűs kódot és linket kapsz. Az üres helyekre bot ül.</p><div class="act"><button class="btn" id="bHost">Szoba létrehozása</button></div></div>
     <div class="mode panel"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--p1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg>
       <h2>Csatlakozás</h2><p><label for="code">Írd be a házigazda kódját.</label></p>
@@ -932,7 +955,7 @@ function mainHTML(S, me){
     const f = S.final, ord = [f[1], f[0], f[2]].filter(x => x != null), hgt = { [f[0]]:130, [f[1]]:92, [f[2]]:62 };
     const w = f[0], wp = S.players[w];
     return `<div class="win-card"><div class="lbl">Végeredmény · ${S.round} háborús kör után</div>
-      <h2>${IC.crown(48, "#101114")}${PN(S, w)} nyert</h2>
+      <h2>${IC.crown(48, "#160F3D")}${PN(S, w)} nyert</h2>
       <p style="margin:10px 0 0;font-weight:700;font-size:17px">${score(S, w)} ponttal${S.stats && S.stats[w] && S.stats[w].castles ? ", várostrommal" : ""}.</p>
       <div class="podium">${ord.map(p => `<div class="pod" style="--c:${PCOL[p]}"><div class="nm">${PN(S, p)}</div><div class="sc">${score(S, p)}</div><div class="bar" style="height:${hgt[p]}px">${f.indexOf(p) + 1}</div></div>`).join("")}</div></div>
       ${leaderboardHTML(S)}
@@ -941,7 +964,7 @@ function mainHTML(S, me){
   if (/pick/.test(ph)){
     const mine = S.cur === me;
     let h = `<div class="lbl">${ph === "bat_pick" ? "Háború · támadás" : ph === "tip_pick" ? "A tipp nyertese választ" : "Terjeszkedés · mezőválasztás"}</div>${qTimer()}`;
-    if (mine) h += `<div class="hint">${IC.tap(26, "#101114")} ${ph === "bat_pick" ? "Te támadsz! Kattints egy ellenséges mezőre a térképen." : "Te jössz! Kattints egy szaggatott keretes mezőre."}</div>${ph === "bat_pick" ? '<p class="note" style="margin-top:10px">A vár 3 sikeres ostrom után esik el, de akkor minden területe a tiéd.</p>' : ""}`;
+    if (mine) h += `<div class="hint">${IC.tap(26, "#160F3D")} ${ph === "bat_pick" ? "Te támadsz! Kattints egy ellenséges mezőre a térképen." : "Te jössz! Kattints egy szaggatott keretes mezőre."}</div>${ph === "bat_pick" ? '<p class="note" style="margin-top:10px">A vár 3 sikeres ostrom után esik el, de akkor minden területe a tiéd.</p>' : ""}`;
     else h += `<div class="waitp">${av(S, S.cur, "lg")}<span>${PN(S, S.cur)} ${ph === "bat_pick" ? "célpontot választ…" : "mezőt választ…"}</span></div>`;
     if (ph === "exp_pick") h += `<ul class="plan">${S.order.map(p => `<li>${av(S, p, "sm")}${PN(S, p)}${S.picks[p] != null ? `<span class="t">→ ${esc(TILES[S.picks[p]].name)}</span>` : `<span class="w">${S.cur === p ? "most választ" : "vár a sorára"}</span>`}</li>`).join("")}</ul>`;
     return h;
@@ -952,15 +975,15 @@ function mainHTML(S, me){
   }
   if (ph === "q" || ph === "q_res"){
     const need = S.need.includes(me), rev = ph === "q_res";
-    let h = `<div class="lbl">${S.ctx === "bat" ? "Csatakérdés" : "Terjeszkedés · kérdés"} · ${esc(S.q.id)}</div>${ctxLine(S)}${rev ? "" : qTimer()}<div class="qt">${esc(S.q.text)}</div><div class="opts${rev ? " rev" : ""}">`;
+    let h = `<div class="lbl">${S.ctx === "bat" ? "Csatakérdés" : "Terjeszkedés · kérdés"} · ${esc(S.q.id)}</div>${ctxLine(S)}${rev ? "" : qTimer()}<div class="qt">${esc(S.q.text)}</div><div class="opts${rev ? " rev" : UI.mine !== null ? " picked" : ""}">`;
     S.q.opts.forEach((o, i) => {
       const who = rev ? Object.keys(R.ans).filter(p => R.ans[p].c === i).map(Number) : [];
       const right = rev && R.correct === i, wrong = rev && !right && who.length;
       let tagx = "";
-      if (right) tagx += '<span class="pill ok">✓ helyes</span>';
+      if (right) tagx += '<span class="pill ok ptag">✓ helyes</span>';
       
-      h += `<button class="opt${UI.mine === i && !rev ? " mine" : ""}${right ? " right" : ""}${wrong ? " wrong" : ""}" data-c="${i}" ${!need || rev || UI.mine !== null ? "disabled" : ""}>
-        <span class="let l${i}">${SHAPES[i]}<b>${"ABCD"[i]}</b></span><span class="tx">${esc(o)}</span>${tagx || who.length ? `<span class="side-r">${tagx}<span class="stack">${who.map(p => av(S, p, "sm")).join("")}</span></span>` : ""}${!rev && UI.mine === i ? '<span class="pill me ptag">a te válaszod</span>' : ""}</button>`;
+      h += `<button class="opt o${i}${UI.mine === i && !rev ? " mine" : ""}${right ? " right" : ""}${wrong ? " wrong" : ""}" data-c="${i}" ${!need || rev || UI.mine !== null ? "disabled" : ""}>
+        <span class="let l${i}">${SHAPES[i]}</span><span class="tx">${esc(o)}</span><span class="ltr">${"ABCD"[i]}</span>${tagx || who.length ? `<span class="side-r">${tagx}<span class="stack">${who.map(p => av(S, p, "sm")).join("")}</span></span>` : ""}${!rev && UI.mine === i ? '<span class="pill me ptag">a te válaszod</span>' : ""}</button>`;
     });
     h += `</div>`;
     if (!rev) h += `<p class="note" style="margin-top:12px">${need ? (UI.mine !== null ? "Válasz elküldve. A többiek válaszát a végén látod." : "Kattints a szerinted helyes válaszra (vagy 1–4).") : "Ebben a kérdésben nem te játszol — figyeld, ki mit tud."}</p>`;
