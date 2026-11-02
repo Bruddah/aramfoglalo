@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Áramfoglaló</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#efe8d8; --paper:#fffaf0; --ink:#1c2a44; --muted:#5d6779; --line:#d6ccb6; --sea:#e3dac4;
+  --accent:#b8612a; --ok:#2f7a55; --bad:#b23a3a;
+  --p0:#c8423a; --p1:#2c6db5; --p2:#c8961a; --free:#f7f1e3;
+  --shadow:0 1px 2px rgba(28,42,68,.06),0 10px 30px rgba(28,42,68,.10);
+  --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace; --disp:"Bricolage Grotesque",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f141d; --paper:#171f2c; --ink:#e9e4d8; --muted:#9aa3b3; --line:#2a3445; --sea:#131a26;
+  --accent:#e08a4f; --ok:#5fbf8c; --bad:#e57373; --p0:#e2625a; --p1:#4f8fd6; --p2:#dcae3a; --free:#222c3c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);
+}}
+:root[data-theme="dark"]{
+  --bg:#0f141d; --paper:#171f2c; --ink:#e9e4d8; --muted:#9aa3b3; --line:#2a3445; --sea:#131a26;
+  --accent:#e08a4f; --ok:#5fbf8c; --bad:#e57373; --p0:#e2625a; --p1:#4f8fd6; --p2:#dcae3a; --free:#222c3c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 40px}
+h1{font:800 clamp(30px,6vw,46px)/1 var(--disp);margin:0;letter-spacing:-.02em}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:8px 0 0}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.opt:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=text],input[type=number]{font:600 17px var(--sans);padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);width:100%}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.home{display:grid;gap:16px;margin-top:22px;grid-template-columns:1fr 1fr}
+.home .panel h2{font:700 20px var(--disp);margin:0 0 6px}
+.home .panel p{color:var(--muted);margin:0 0 14px;font-size:14.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:600}
+.rules{margin-top:16px;font-size:14.5px;color:var(--muted)}
+.rules b{color:var(--ink)}
+.err{color:var(--bad);font-size:14px;margin-top:8px;min-height:1em}
+.code{font:700 40px/1 var(--mono);letter-spacing:.18em;color:var(--accent)}
+.plist{list-style:none;padding:0;margin:12px 0}
+.plist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.dot{width:14px;height:14px;border-radius:50%;flex:none}
+/* game */
+.top{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.pc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden}
+.pc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+.pc.cur{box-shadow:0 0 0 2px var(--c)}
+.pc.dead{opacity:.45}
+.pc .nm{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc .sc{font:700 22px/1.1 var(--disp)}
+.pc .meta{font:500 11.5px var(--mono);color:var(--muted)}
+.status{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:4px 0 10px}
+.status .ph{font:700 18px var(--disp)}
+.cd{font:700 20px var(--mono);min-width:3ch;text-align:right;color:var(--accent)}
+.cd.low{color:var(--bad)}
+.gamegrid{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;align-items:start}
+.mapbox{background:var(--sea);border:1px solid var(--line);border-radius:16px;padding:10px}
+svg.map{width:100%;height:auto;display:block}
+.hex{stroke:var(--bg);stroke-width:3;transition:fill .3s}
+.hex.click{cursor:pointer}
+.hex.click:hover{filter:brightness(1.12)}
+.hl{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:7 5;pointer-events:none}
+.pend{fill:none;stroke-width:4;stroke-dasharray:6 4;pointer-events:none}
+.target{fill:none;stroke:var(--bad);stroke-width:5;pointer-events:none}
+.tl{font:600 11px var(--sans);text-anchor:middle;pointer-events:none;fill:var(--ink)}
+.tv{font:700 13px var(--mono);text-anchor:middle;pointer-events:none;fill:var(--ink)}
+.owned .tl,.owned .tv{fill:#fff}
+.q{font:600 clamp(18px,2.6vw,21px)/1.35 var(--disp);margin:0 0 12px}
+.tagl{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;border:0;border-radius:11px;padding:11px 13px;min-height:52px;cursor:pointer;color:#fff;font-weight:600;font-size:15px;line-height:1.3;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.opt .sh{flex:none;width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.22);display:grid;place-items:center;font:600 13px var(--mono)}
+.o0{background:#c0392b}.o1{background:#2563a8}.o2{background:#b7860b}.o3{background:#2f7a55}
+.opt:disabled{cursor:default}
+.opts.done .opt:not(.right):not(.mine){opacity:.3}
+.opt.mine{outline:3px solid var(--ink);outline-offset:2px}
+.opt.right{outline:3px solid var(--ok);outline-offset:2px}
+.opt .who{margin-left:auto;display:flex;gap:3px}
+.opt .who i{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.note{font-size:14px;color:var(--muted);margin-top:10px}
+.expl{font-size:14px;line-height:1.5;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.res{list-style:none;padding:0;margin:10px 0 0}
+.res li{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}
+.res li .v{font:600 15px var(--mono);margin-left:auto}
+.res li.win{font-weight:700}
+.big{font:800 34px/1 var(--disp);color:var(--accent);margin:4px 0}
+.log{font-size:13px;color:var(--muted);margin-top:12px;max-height:120px;overflow:auto}
+.log div{padding:2px 0}
+.badge{display:inline-block;font:600 11px var(--mono);padding:2px 6px;border-radius:5px;background:var(--bg);color:var(--muted);margin-left:6px;vertical-align:middle}
+@media (max-width:760px){
+  .home{grid-template-columns:1fr}
+  .gamegrid{grid-template-columns:1fr}
+  .pc .sc{font-size:18px}.pc .nm{font-size:13px}.mz{display:none}.top{gap:6px}.pc{padding:7px 9px}
+}
+@media (prefers-reduced-motion:reduce){.hex{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const DATA = {"mc": [{"id": "A1", "d": "A", "q": "Melyik két szélsőséges állapotra kell kiszámítani egy szabadvezeték belógását, és melyiket kell mértékadónak tekinteni?", "o": ["−5 °C jéggel és +40 °C; a nagyobb belógás számít", "−20 °C és +30 °C; a kisebb belógás számít", "−5 °C széllel és +25 °C; az átlaguk számít", "0 °C jéggel és +40 °C; mindig a téli számít"], "a": "Télen, kb. −5 °C-on, jégteherrel, szél nélkül (ekkor szakadhat el), és nyáron, +40 °C-on, teher nélkül (ekkor lóg a legmélyebben). A kettő közül a nagyobb belógás a mértékadó."}, {"id": "A2", "d": "A", "q": "Mennyi a szabadvezeték legkisebb megengedett távolsága a talajtól belterületen, utak felett – és mennyi ott, ahol csak gyalogosok járnak?", "o": ["5,5 m, illetve 4 m", "6 m, illetve 3 m", "4,5 m, illetve 2,5 m", "7 m, illetve 5 m"], "a": "Belterületen, utak felett legalább 5,5 m. Ahol csak gyalogosok járnak, legalább 4 m. (Kert, külterület, behajtó: 5 m; falra szerelt szigetelt vezeték: 3 m.)"}, {"id": "A3", "d": "A", "q": "Mi a dolga a szigetelőnek, és miért tányéros a felülete?", "o": ["Elválaszt az oszloptól és tart; a tányér a kúszóáram útját nyújtja", "Hűti a vezetéket; a tányér a hőt adja le", "Rezgést csillapít; a tányér a szelet töri meg", "Villám ellen véd; a tányér az esővizet vezeti le"], "a": "Elválasztja a feszültség alatti vezetéket a földelt oszloptól, és közben megtartja a súlyát. Két ellenfele van: az átütés és a felületen kúszó áram. A tányérok ez utóbbi útját hosszabbítják meg esőben, párában, koszban."}, {"id": "A4", "d": "A", "q": "Miért van egy utcában négy vezeték az oszlopon, a falu szélén viszont csak három?", "o": ["Utcán 3 fázis + nulla; kint nagyobb fesz., föld a visszatérés", "Az utcán egy tartalék fázis is fut", "Kint a nullát a villámvédő vezeték helyettesíti", "A falu szélén egyfázisú a hálózat"], "a": "Az utcában három fázisvezető és egy nullavezető fut: a házak terhelése sosem egyforma, kell a visszatérő út. A falu szélén nagyobb feszültség van, ott a visszatérés a földön keresztül oldódik meg."}, {"id": "A5", "d": "A", "q": "Mi történik a ház falán lévő szürke szekrényben, és kié a benne lévő fogyasztásmérő?", "o": ["Csatlakozási pont (tulajdoni határ); a mérő nem a lakóé", "Leágazási pont; a mérő a lakóé", "Elosztószekrény; a mérő az önkormányzaté", "Csatlakozási pont; a mérő a lakóé"], "a": "Ez a csatlakozási pont, vagyis a tulajdoni határ: idáig tart a hálózat, innen kezdődik a felhasználói berendezés. A fogyasztásmérő a csatlakozóberendezés tartozéka, tehát nem a lakóé."}, {"id": "A6", "d": "A", "q": "Miért van ólomplomba a mérőóra szekrényén?", "o": ["Zárópecsét: nyom nélkül ne lehessen hozzányúlni", "Földelés: elvezeti a hibaáramot", "Hitelesítési jel: a mérő pontosságát igazolja", "Súly: zárva tartja a szekrényajtót"], "a": "A mérőt és a még nem mért vezetékszakaszt zárópecséttel kell ellátni, hogy illetéktelen ne férhessen hozzá nyom nélkül. A mérőhelynek ezen felül kizárólagos őrizetben kell lennie."}, {"id": "A7", "d": "A", "q": "Miért zúg egy transzformátorállomás, és mi a feladata?", "o": ["Fesz.-csökkentés; a vasmag 100×/s nyúlik-húzódik", "Fesz.-csökkentés; a hűtőventilátor zúg", "Fesz.-emelés; ívkisülés a kapcsokon", "Fesz.-csökkentés; a vasmag 50×/s rezeg"], "a": "Feladata: a nagyobb feszültséget kisebbre alakítja. Zúg, mert a vasteste a mágneses tér ütemére másodpercenként százszor észrevehetetlenül megnyúlik és összehúzódik."}, {"id": "A8", "d": "A", "q": "Miért éri meg nagy távolságra nagyobb feszültségen szállítani az energiát?", "o": ["Fele áram → negyedakkora veszteség (I²)", "Fele áram → fele akkora veszteség", "Nagyobb feszültségen kisebb a vezeték ellenállása", "Nagyobb feszültségen gyorsabban ér oda az energia"], "a": "Ugyanaz a teljesítmény nagyobb feszültségen kisebb árammal megy át, a vezeték melegedése pedig az áram négyzetével nő. Kétszeres feszültség → fele áram → negyedakkora veszteség."}, {"id": "A9", "d": "A", "q": "Hol húzódik a határ a kis-, a közép- és a nagyfeszültség között? Nevezz meg mindegyikből egy hazai szintet!", "o": ["Kis ≤1 kV · közép 1–35 kV · nagy >35 kV", "Kis ≤400 V · közép ≤10 kV · nagy >10 kV", "Kis ≤1 kV · közép 1–132 kV · nagy >132 kV", "Kis ≤230 V · közép ≤20 kV · nagy >20 kV"], "a": "Kisfeszültség 1 kV-ig (230/400 V). Középfeszültség 1–35 kV (3, 6, 11, 22, 30, 35 kV; a falut ellátó kb. 20 kV). Nagyfeszültség 35 kV fölött (132, 220, 400, kivételesen 750 kV)."}, {"id": "A10", "d": "A", "q": "Mi a dolga a rácsos torony legtetején futó, vékonyabb vezetéknek?", "o": ["Villámvédő, benne optikai szál", "Tartalék fázisvezető", "Nullavezető", "Feszültségmérő jelvezeték"], "a": "Nem visz energiát, hanem véd: a villám ide csap be, és a torony szerkezetén át a földbe vezeti. A mai változatban optikai szálak is futnak benne, így beszél az irányítóterem az alállomásokkal."}, {"id": "B1", "d": "B", "q": "Mely három műszaki fejlemény döntötte el a váltakozó áram javára a vitát?", "o": ["Transzformátor, forgó mágneses tér, nagy távolságú átvitel", "Izzólámpa, dinamó, akkumulátor", "Gőzturbina, villamos, telefon", "Egyenirányító, kondenzátor, Pearl Street"], "a": "1) A transzformátor (Ganz, Zipernowsky–Bláthy–Déri, 1885). 2) A forgó mágneses tér és a kefe nélküli motor (Ferraris és Tesla, 1888 táján). 3) A távolság: Lauffen–Frankfurt 1891, kb. 175 km, a teljesítmény háromnegyede megérkezett."}, {"id": "B2", "d": "B", "q": "Miért nem lehetett az egyenáramú rendszert nagy távolságra kiterjeszteni?", "o": ["A feszültségét nem lehetett gazdaságosan átalakítani", "Egyenárammal nem lehetett motort hajtani", "Az egyenáram veszélyesebb volt", "Nem volt hozzá elég réz a világon"], "a": "Egyenárammal a feszültséget nem lehetett gazdaságosan átalakítani, ezért azon a feszültségen kellett szállítani, amelyen a lámpa működik. Miesbach–München (1882, 57 km): a teljesítmény háromnegyede elveszett."}, {"id": "B3", "d": "B", "q": "Milyen szerepe volt a transzformátor párhuzamos kapcsolhatóságának?", "o": ["Függetlenné tette egymástól a fogyasztókat", "Megkétszerezte a frekvenciát", "Kiváltotta a központi erőművet", "Egyenárammá alakította a váltakozót"], "a": "A zárt vasmagú, párhuzamosan kapcsolható transzformátor a fogyasztókat egymástól függetlenné tette, és lehetővé tette a feszültség gazdaságos átalakítását."}, {"id": "B4", "d": "B", "q": "Miért volt a XIX. század végén a szétosztott, helyi áramtermelés az általános – és mi tette a központi erőművet olcsóbbá?", "o": ["Mindenkinek saját gépe volt; a nagy gép és a vegyes csúcsok tették olcsóvá", "Tilos volt vezetéket húzni; a szén ára esett", "Nem volt még váltakozó áram; állami támogatás jött", "Nem volt szabvány; a vasút terjedése segített"], "a": "Minden gyárnak, szállodának saját gépháza volt, annyit termelt, amennyit elhasznált. Olcsóbbá tette: a nagy gép (Parsons gőzturbinája, 1884) fajlagosan olcsóbb és jobb hatásfokú; a vegyes fogyasztói kör csúcsai nem esnek egybe; ebből olcsó ár."}, {"id": "B5", "d": "B", "q": "Mit jelent az, hogy a különböző fogyasztók csúcsai nem esnek egybe, és miért csökkenti ez a szükséges gépteljesítményt?", "o": ["Más időben csúcsolnak, így a gép kisebb lehet a csúcsok összegénél", "Mindenki egyszerre fogyaszt, ezért nagy gép kell", "A csúcsok kioltják egymást, nem kell tartalék", "A fogyasztók csúcsban maguk termelnek"], "a": "A villamos reggel, a bolt délben, a lakás este csúcsol. Ha egy gép látja el mindet, a szükséges gép sokkal kisebb, mint a csúcsok összege. Neve: sokféleség, illetve egyidejűség (Wright díjszabása → Insull, 1894)."}, {"id": "B6", "d": "B", "q": "Miért sugaras – fa alakú – az elosztóhálózat, és milyen három előnye volt ennek?", "o": ["Kevesebb réz, egyszerű védelem, behatárolható hiba", "Kétirányú betáplálás, nagyobb feszültség, kisebb frekvencia", "Kevesebb oszlop, olcsóbb szigetelő, szebb utcakép", "Hurkolt üzem, teljes redundancia, nincs szükség védelemre"], "a": "1) Kevesebb réz, ami a legdrágább tétel volt. 2) Egyszerű védelem: a hibaáram csak egy irányból jöhet. 3) Behatárolhatóság: egy ág kiesése csak azt az ágat érinti. Ma gyakran gyűrűre építik, de egy ponton nyitva, sugarasan üzemeltetik."}, {"id": "B7", "d": "B", "q": "Mit mond ki a gazdaságos vezetékkeresztmetszet szabálya?", "o": ["Réz évi tőkeköltsége = elvesző energia évi ára", "Minél vastagabb, annál gazdaságosabb", "Az áramsűrűség max. 1 A/mm² lehet", "A veszteség ne haladja meg a 10%-ot"], "a": "Kelvin, 1881: az optimum ott van, ahol a réz évi tőkeköltsége egyenlő a rajta elvesző energia évi árával."}, {"id": "B8", "d": "B", "q": "Miért éppen 50 periódus? Milyen két, ellentétes szempont metszete ez?", "o": ["Kompromisszum: lent villog, fent nő a veszteség", "Természeti állandó, a Föld forgásából adódik", "Az izzók hatásfoka 50 Hz-en maximális", "Edison tette szabvánnyá Amerikában"], "a": "Megegyezés, nem természeti állandó. Alacsonyabb frekvencián a nagy gépek és hosszú vezetékek jobban viselkednek, de 25 Hz-en villog az izzó. Följebb nincs villogás, de nőnek a veszteségek és nehezebb a szinkron. A gyárak tették szabvánnyá (Oerlikon kb. 1890, AEG 1896; hivatalos német szabvány 1930)."}, {"id": "B9", "d": "B", "q": "Milyen három változás billentette meg a XX. század végén a központi modell fölényét?", "o": ["Rejtett tüzelőanyag-költség, olcsó mérés/vezérlés, hőgép nélküli források", "Atomenergia, olcsó olaj, szabványosítás", "Privatizáció, internet, áramár-esés", "Szénhiány, világháború, villamosítás"], "a": "1) A tüzelőanyagnak olyan ára is lett, amely nem jelenik meg a számlán. 2) A mérés és a vezérlés olcsó lett. 3) Megjelent tüzelőanyag és hőgép nélküli energiaforrás, így a nagy gép fölénye jórészt eltűnik."}, {"id": "B10", "d": "B", "q": "Miért nem nevezhetjük tévedésnek a központi rendszer melletti döntést – és mi az, ami mégis korlát lett belőle?", "o": ["Akkor számokkal jobb volt; ma a vezetékek állnak rossz helyen", "Tévedés volt, a szigetek mindig jobbak voltak", "Politikai döntés volt, műszakilag sosem érte meg", "Csak a 50 Hz miatt lett korlát"], "a": "A maga korában mérhetően, számokkal jobb volt. A korlát: a hálózat a régi árakra és feltevésekre épült meg, és nem lehet kikapcsolni, hogy átépítsük. „Nem a gondolat rossz. A vezetékek állnak rossz helyen.”"}, {"id": "C1", "d": "C", "q": "Miben különbözik az átvitel és az elosztás – és meddig tart az egyik, illetve a másik?", "o": ["Átvitel: nagy táv, nagyfesz. · elosztás: településen át a házakig", "Átvitel: településen belül · elosztás: országok között", "Átvitel: erőművön belül · elosztás: a mérő után", "A kettő ugyanaz, csak más néven"], "a": "Átvitel: nagy távolságú, nagyfeszültségű szállítás, az átviteli hálózaton. Elosztás: az energia szétterítése a településeken és eljuttatása a házakig, az elosztóhálózaton. Az erőművekkel együtt a kettő a villamosmű."}, {"id": "C2", "d": "C", "q": "Mi a különbség a csatlakozási pont és a leágazási pont között?", "o": ["Leágazási: ahol a ház szála a hálózatra köt · csatlakozási: tulajdoni határ", "Csatlakozási: ahol a szál leágazik · leágazási: tulajdoni határ", "Mindkettő a mérőóránál van", "Csatlakozási pont a transzformátorállomáson van"], "a": "Leágazási pont: a hálózatnak az a pontja, ahol a házhoz vezető szál csatlakozik. Csatlakozási pont: ahol a hálózat átadja az energiát a háznak, a tulajdoni határ."}, {"id": "C3", "d": "C", "q": "Egy társasházban melyik szakaszt nevezzük összekötő berendezésnek, és ki felel érte?", "o": ["Csatlakozási pont utáni méretlen szakasz; a ház közössége", "A mérő utáni szakasz; a lakó", "A leágazási pontig tartó szakasz; az elosztó", "Az alállomás és a ház közötti kábel; az állam"], "a": "A csatlakozási pont utáni, méretlen, de nem az elosztó tulajdonában álló szakaszt (felszálló és leágazó fővezetékek a mérőhelyig). A ház közössége felel érte."}, {"id": "C4", "d": "C", "q": "Mi a különbség a felszálló fővezeték és a leágazó fővezeték között?", "o": ["Felszálló: több lakást lát el · leágazó: egy lakáshoz megy a mérőig", "Felszálló: egy lakás · leágazó: az egész ház", "Felszálló: földkábel · leágazó: légvezeték", "Mindkettő a lakáson belüli vezeték"], "a": "Felszálló: emeletről emeletre megy fel, több lakást lát el. Leágazó: erről egyetlen lakáshoz ágazik le, a mérőhelyig tart."}, {"id": "C5", "d": "C", "q": "Mitől lesz egy hálózat közcélú – tulajdon vagy szerep kérdése ez?", "o": ["Szerep: bárki egyforma feltételekkel csatlakozhat", "Tulajdon: ha állami tulajdonban van", "Méret: ha 35 kV fölött üzemel", "Hossz: ha 1 km-nél hosszabb"], "a": "Szerep kérdése. Közcélú az a hálózat, amely a rendszer biztonságos és hatékony működéséhez szükséges, és amelyhez bárki egyforma feltételekkel csatlakozhat."}, {"id": "C6", "d": "C", "q": "Mi a különbség a magánvezeték és a termelői vezeték között?", "o": ["Magán: gyár a saját területén · termelői: erőmű vezetéke a hálózatig", "Magán: erőmű vezetéke · termelői: gyár saját területén", "Mindkettő közcélú hálózat", "Magán: a lakás belső vezetéke · termelői: a napelem kábele"], "a": "Magánvezeték: egy gyár a saját területén húzza. Termelői vezeték: egy erőmű a saját vezetékén megy ki a hálózatig."}, {"id": "C7", "d": "C", "q": "Miben különbözik a megszakító és a szakaszoló – és melyiket szabad terhelés alatt működtetni?", "o": ["Megszakító terhelés alatt bont · szakaszoló látható szakadást ad, árammentesen", "Szakaszoló terhelés alatt bont · megszakító csak árammentesen", "Mindkettőt szabad terhelés alatt működtetni", "A szakaszoló old ki hibánál a leggyorsabban"], "a": "Megszakító: terhelés alatt is bont, kioltja az ívet, hibánál a másodperc törtrésze alatt lekapcsol. Szakaszoló: nem olt ívet, csak árammentesen működtethető, cserébe szemmel látható szakadást ad. Terhelés alatt: a megszakító."}, {"id": "D1", "d": "D", "q": "Miért ingadozik folyamatosan a frekvencia, és mit árul el a rendszer állapotáról?", "o": ["Termelés és fogyasztás eltérése: a forgó gépek lassulnak/gyorsulnak", "A feszültség ingadozása", "Az időjárás és a hőmérséklet", "A hálózat hossza és a réz ellenállása"], "a": "Az energiát nem lehet a vezetékben tárolni. Ha a fogyasztás nagyobb a termelésnél, a nagy forgó gépek lassulnak, ha kisebb, gyorsulnak. A frekvencia a termelés–fogyasztás egyensúlyát mutatja, és az összekötött rendszerben mindenhol ugyanaz."}, {"id": "D2", "d": "D", "q": "Mi a menetrend, és milyen időegységekre bontva adják be?", "o": ["Előre beadott termelési/fogyasztási ígéret, negyedóránként", "Előre beadott ígéret, óránként", "Karbantartási terv, naponta", "Tarifatáblázat, havonta"], "a": "Előre beadott ígéret arról, mennyit fog egy szereplő másnap termelni vagy fogyasztani. Elszámolási mérési időegységekre, vagyis negyedóránként."}, {"id": "D3", "d": "D", "q": "Mi a kiegyenlítő energia, és milyen elven számolják el?", "o": ["Az eltérés pótlása; aki eltér, a helyreállítás költségét fizeti", "Fix bírság minden eltérés után", "Az állam fizeti a tartalékból", "Ingyenes, a rendszerirányító állja"], "a": "Az az energia, amelyet a rendszerirányító a menetrendtől való eltérés pótlására felhasznál. Azzal számolják el, aki eltért: nem az eltérést bünteti, hanem a helyreállítás költségét téríti meg."}, {"id": "D4", "d": "D", "q": "Mi a mérlegkör feladata?", "o": ["Felelősségi keret egy csoportra, kijelölt felelőssel", "Egy speciális mérőóra-típus", "A kiegyenlítő energia tőzsdéje", "Az erőművek tartalékrendszere"], "a": "Felelősségi keret erőművek, kereskedők és fogyasztók csoportjára, kijelölt felelőssel. Így lesz a hibából számla, nem vádaskodás."}, {"id": "D5", "d": "D", "q": "Miért nem elég a csatlakozási pont az elszámoláshoz – mi az elszámolási pont?", "o": ["Nem mindig a tulajdoni határon mérnek; egy csatlakozáshoz több pont is tartozhat", "A csatlakozási pontban nincs mérő", "Csak ipari fogyasztóknál létezik", "A kettő mindig ugyanaz"], "a": "A mérés és az elszámolás nem mindig a tulajdoni határon történik, és egy telephelyen külön kell számolni a fogyasztást, a betáplálást, a tárolást. Az elszámolási pont az, amelyhez a menetrend és az elszámolás kapcsolódik; egy csatlakozási ponthoz több is tartozhat."}, {"id": "D6", "d": "D", "q": "Sorolj fel legalább négy olyan szolgáltatást, amely nem a frekvencia tartását szolgálja, mégis nélkülözhetetlen!", "o": ["Feszültségszabályozás, inercia, rövidzárlati áram, black start", "Menetrend, mérlegkör, tarifa, plomba", "Primer, szekunder és tercier szabályozás", "Hálózatbővítés, okosmérő, aggregátor, HMKE"], "a": "Feszültségszabályozás, gyors reagálású árambetáplálás, helyi hálózatstabilitási inercia, rövidzárlati áram, önindítási képesség (black start), szigetszerű működés."}, {"id": "D7", "d": "D", "q": "Mikor beszélünk üzemi hibáról, és mikor nem – akkor sem, ha a felhasználó sötétben marad?", "o": ["Váratlan, nem szándékolt változás; a bejelentett karbantartás nem az", "Minden áramszünet üzemi hiba", "Csak az 1 óránál hosszabb kiesés", "Csak ha 1000-nél több fogyasztót érint"], "a": "Üzemi hiba: váratlan esemény, amely a termelés, átvitel vagy elosztás tervezett menetében nem szándékolt változást okoz. Egy előre bejelentett, karbantartás miatti kikapcsolás nem üzemi hiba, akkor sem, ha a lakók sötétben maradnak."}, {"id": "E1", "d": "E", "q": "Mi az inverter feladata azon túl, hogy egyenáramot váltakozó árammá alakít?", "o": ["A hálózat ütemére, ms-pontosan táplál be és adatot ad", "Energiát tárol a hálózat számára", "Feszültséget emel 400 kV-ra", "Hűti a napelemeket"], "a": "Pontosan a hálózat ütemére és feszültségéhez igazodva táplál be, ezredmásodpercre pontosan, mozgó alkatrész nélkül, és üzemeltetési adatokat állít elő. A mai rendszer legtöbb új kérdése erre a dobozra vezethető vissza."}, {"id": "E2", "d": "E", "q": "Mi alapján kell megállapítani egy inverteres erőmű névleges teljesítőképességét – és beleszámít-e a tároló?", "o": ["Inverterek AC oldali összege; a tároló nem számít bele", "A panelek DC összege; a tároló is beleszámít", "A csúcsteljesítmény; a tároló is beleszámít", "Az éves termelés MWh-ban"], "a": "Az inverterek váltakozó áramú, hálózat felőli oldalán mért névleges hatásos teljesítményeinek összege. A csatlakozási pont erőművi oldalára kötött tároló nem számít bele."}, {"id": "E3", "d": "E", "q": "Hol a határa a kiserőműnek és a háztartási méretű kiserőműnek – és miben adjuk meg az utóbbit?", "o": ["Kiserőmű <50 MW · HMKE ≤50 kVA (kVA-ban!)", "Kiserőmű <20 MW · HMKE ≤50 kW", "Kiserőmű <100 MW · HMKE ≤10 kVA", "Kiserőmű <50 MW · HMKE ≤5 kW"], "a": "Kiserőmű: 50 MW alatt. Háztartási méretű kiserőmű (HMKE): kisfeszültségű hálózatra csatlakozik, egy csatlakozási ponton legfeljebb 50 kVA csatlakozási teljesítménnyel. Figyelj: kilovoltamper, nem kilowatt."}, {"id": "E4", "d": "E", "q": "Mekkora teljesítménnyel számol a méretezés egy lakásnál három-, illetve egyfázisú ellátás esetén?", "o": ["13,8 kW, illetve 7,36 kW", "11 kW, illetve 3,6 kW", "22 kW, illetve 7,36 kW", "13,8 kW, illetve 4,6 kW"], "a": "Háromfázisú: 3 × 20 A ≈ 13,8 kW. Egyfázisú: 1 × 32 A ≈ 7,36 kW."}, {"id": "E5", "d": "E", "q": "Hogyan veszik figyelembe a hálózat méretezésénél egy háztartási méretű kiserőmű betáplálását?", "o": ["Negatív teljesítményértékként", "Sehogy, figyelmen kívül hagyják", "Kétszeres súlyú pozitív értékként", "Külön, független számításban"], "a": "Negatív teljesítményértékként, ugyanabban a méretezési számításban, ellenkező előjellel."}, {"id": "E6", "d": "E", "q": "Miben különbözik az aktív felhasználó a termelő-fogyasztótól?", "o": ["Termelő-fogyasztó = aktív felhasználó, aki megújulóból termel", "Ugyanazt jelenti a kettő", "A termelő-fogyasztó üzletszerűen termel", "Az aktív felhasználó egy aggregátor"], "a": "Aktív felhasználó: saját termelését felhasználja, tárolja, betáplálja, vagy rugalmasságot ajánl fel, de nem üzletszerű főtevékenységként. Termelő-fogyasztó: ha ráadásul megújuló forrásból termel saját fogyasztásra."}, {"id": "E7", "d": "E", "q": "Mit jelent a megosztási hozzárendelés, és milyen felbontású adatokra épül?", "o": ["Megosztott energia hozzárendelése a pontokhoz, negyedórás adatokon", "Ugyanez, havi összesített adatokon", "Ugyanez, éves becslésen", "A hálózati díj megosztása a szomszédok között"], "a": "A megosztott (közvetlenül átadott) energiamennyiség hozzárendelése a résztvevők elszámolási pontjaihoz, negyedórás adatok alapján. A megosztás mérési feladat, és ott bukik el, ahol nincs megfelelő mérés."}, {"id": "E8", "d": "E", "q": "Miért lesz sok kicsi egységből rendszerszinten használható erőforrás – mi az aggregálás?", "o": ["Sok kis egység összevonása, hogy együtt piacra lépjenek", "Áramkörök fizikai összekötése", "Tarifák összevonása egy számlára", "A hálózat szigetekre bontása"], "a": "Sok kis erőmű, fogyasztó és tároló összevonása, hogy együtt jelenjenek meg a piacon; az aggregátor végzi. Tízezer házi tároló együtt akkora és gyorsabb, mint egy közepes erőmű. Testvérfogalom: keresletoldali szabályozás."}, {"id": "E9", "d": "E", "q": "Mekkora feszültségesés engedhető meg összesen a csatlakozáshoz vezető szakaszokon, és hogyan oszlik meg?", "o": ["2%: 1% csatlakozóvezeték + 1% házon belüli méretlen", "5%: 2,5% + 2,5%", "10% összesen", "2%, de csak a házon belül"], "a": "Összesen legfeljebb 2%: jellemzően 1% a hálózat felőli csatlakozóvezetéken és 1% a házon belüli méretlen szakaszon."}, {"id": "E10", "d": "E", "q": "Nevezz meg négy okot, amiért egy leágazás betáplálási befogadóképessége elfogyhat a vezeték melegedése előtt!", "o": ["Feszültségtartás, fázisszimmetria, védelem, időzítés", "Szél, napsütés, ár, tarifa", "Mérő, plomba, frekvencia, réz", "Oszlopmagasság, szigetelő, festés, kor"], "a": "1) Feszültségtartás: a 2%-os sáv, a betáplálás megemeli a feszültséget. 2) Fázisszimmetria: egyfázisú betáplálók, a 0,75-ös aszimmetriatényező. 3) Védelem: a teljesítmény megfordul, és az inverter máshogy viselkedik zárlatkor. 4) Időzítés."}, {"id": "E11", "d": "E", "q": "Mit vállal a rendszerhasználó egy korlátozott, rugalmas hálózati csatlakozás esetén?", "o": ["Előre rögzített feltételekkel, ellentételezés nélkül visszaveszi", "Minden visszavételért ellentételezést kap", "Korlátlanul táplálhat be cserébe", "Véglegesen leválasztják a hálózatról"], "a": "Korlátozott kapacitást vagy korlátozott üzemelést: előre rögzített feltételek szerint, külön ellentételezés nélkül visszaveszi a betáplálását vagy a vételezését."}, {"id": "E12", "d": "E", "q": "Mi a különbség a távlehívható mérő és az okosmérő képességei között – és miért ez a rugalmasság feltétele?", "o": ["Távlehívható csak küld adatot · okosmérő utasítást is fogad", "Okosmérő csak küld · távlehívható utasítást fogad", "A kettő ugyanaz", "Az okosmérő nem mér, csak kapcsol"], "a": "Távlehívható mérő: méri, tárolja és elküldi az adatokat (beszél). Okosmérő: távoli utasítást is fogad tájékoztatásra, vezérlésre, ellenőrzésre (hallgat is). A rugalmassághoz üzenetet kell tudni küldeni a fogyasztás felé."}, {"id": "F1", "d": "F", "q": "Mi a különbség a berendezésüzemeltető, a berendezésfelelős és a munkavezető felelőssége között?", "o": ["Üzemeltető: rendet szab · felelős: biztonságos állapot · munkavezető: helyszín", "Üzemeltető: helyszín · felelős: rend · munkavezető: engedély", "Mindhárom ugyanazért felel", "Üzemeltető: engedély · felelős: helyszín · munkavezető: rend"], "a": "Berendezésüzemeltető: meghatározza, milyen rend szerint kell üzemeltetni. Berendezésfelelős: a munka idejére felel a biztonságos állapotért, ő engedélyezi a munkát. Munkavezető: a helyszínen irányítja a munkát."}, {"id": "F2", "d": "F", "q": "Átszáll-e az üzemeltetői szerep arra, akit egy konkrét munka elvégzésével bíznak meg?", "o": ["Nem, egy berendezésnek egyszerre egy üzemeltetője van", "Igen, a munka idejére átszáll", "Igen, véglegesen átszáll", "Csak 1 kV fölött száll át"], "a": "Nem. Egy berendezésnek egy időben csak egyetlen üzemeltetője van, a megbízás nem adja át a szerepet. A vállalkozó a munkájáért felel, az üzemeltető a berendezésért."}, {"id": "F3", "d": "F", "q": "Ki a kioktatott személy, és miben különbözik a szakképzettől?", "o": ["Kioktatott: felkészítették, tudja mit kerüljön · szakképzett: maga értékel", "Kioktatott: maga értékel · szakképzett: felkészítették", "Ugyanazt jelenti", "Kioktatott: diplomás mérnök"], "a": "Kioktatott: akit egy szakképzett megfelelően felkészített, így el tudja kerülni a veszélyt; nem érti a rendszert, de tudja, mihez ne nyúljon. Szakképzett: képesítése, tudása és gyakorlata alapján maga értékeli a kockázatot."}, {"id": "F4", "d": "F", "q": "Miért nem elég azt kérdezni, hogy valaki „szakképzett-e”?", "o": ["A képesítés berendezéshez kötött", "Mert ma már mindenki szakképzett", "Mert csak a gyakorlati évek számítanak", "Mert a kioktatás mindig elég"], "a": "Mert a képesítés berendezéshez kötött: más kell egy lakáshoz, egy nagyfeszültségű alállomáshoz, a felülvizsgálathoz, és van, amelyik csak 1000 V-ig érvényes. A helyes kérdés: erre a berendezésre szakképzett-e?"}, {"id": "F5", "d": "F", "q": "Mi a kezelőtér, és mikor nevezzük elzártnak?", "o": ["Nem teljes érintésvédelem, csak legalább kioktatott · elzárt: max. 2×/műszak", "Bárki bemehet · elzárt: ha kulcsra zárják", "Csak szakképzett · elzárt: max. 4×/műszak", "Kioktatott sem mehet be · elzárt: naponta 1×"], "a": "Olyan tér, ahol a berendezések nem elégítik ki minden szempontból az érintés elleni alapkövetelményeket, ezért csak feljogosított, legalább kioktatott személy kezelheti. Elzárt, ha csak ritkán járnak benne: műszakonként legfeljebb kétszer."}, {"id": "F6", "d": "F", "q": "Miért nem üzemi munka egy égő cseréje – és mi a nem villamos munka veszélye?", "o": ["Rendeltetésszerű használat · nem villamos munkánál nem is tudja, hogy veszély van", "Mert kis feszültség · nem villamos munkánál nincs veszély", "Mert 1 percnél rövidebb · a zaj a veszély", "Mert nincs szerszám · a magasság a veszély"], "a": "Az égőcsere rendeltetésszerű használat, villamos ismeret nélkül is biztonságos. Nem villamos munka (ásás, festés, gallyazás, fűnyírás vezeték közelében): a veszély az, hogy a dolgozó nem is tudja, hogy villamos veszély közelében van."}, {"id": "F7", "d": "F", "q": "Sorold fel az öt biztonsági műveletet a helyes sorrendben, és indokold a sorrendet!", "o": ["Leválaszt → biztosít → ellenőriz → földel → elhatárol", "Földel → leválaszt → ellenőriz → biztosít → elhatárol", "Ellenőriz → leválaszt → földel → elhatárol → biztosít", "Leválaszt → földel → biztosít → elhatárol → ellenőriz"], "a": "1) Teljes körű leválasztás minden tápforrásról. 2) Visszakapcsolás elleni biztosítás. 3) A feszültségmentes állapot ellenőrzése minden vezetőn. 4) Földelés és rövidre zárás. 5) A közeli aktív részek elhatárolása. Egymásra épülnek: biztosítás nélkül az ellenőrzés egy másodperc múlva már nem igaz, ellenőrzés nélkül a földelés felszerelése életveszélyes."}, {"id": "F8", "d": "F", "q": "Mi a különbség a feszültségmentes állapot és a feszültség nélküli állapot között?", "o": ["Nélküli: nincs táp, de az 5 lépés nincs kész · mentes: mind az 5 kész", "Mentes: nincs táp · nélküli: mind az 5 lépés kész", "A kettő ugyanaz", "Mentes: csak leválasztva, földelés nélkül"], "a": "Feszültség nélküli: a táplálással megszakadt a kapcsolat, de az öt lépés nem teljesült hiánytalanul. Feszültségmentes: minden lehetséges forrás felől leválasztva, és mind az öt művelet kész. Addig feszültség alattinak kell tekinteni."}, {"id": "F9", "d": "F", "q": "Mikor kell egy fogyasztói leágazást lehetséges betáplálási pontnak tekinteni?", "o": ["Kétoldali betáplálás, generátoros üzem, visszatáplálási felirat", "Napelemes ház, hosszú vezeték, régi mérő", "Ipari fogyasztó, éjszaka, eső", "Mindig, minden leágazás az"], "a": "Ha kétoldali betáplálása van, ha generátoros üzem csatlakozik rá, vagy ha a bontási helyen felirat figyelmeztet a visszatáplálás lehetőségére."}, {"id": "F10", "d": "F", "q": "Mit véd a munkahelyi földelés és rövidre zárás, és miért ideiglenes?", "o": ["Ha mégis fesz. jön, a fémúton folyjon és a védelem oldjon; csak erre a munkára", "Villámtól véd; tartósan a helyén marad", "Méri a maradék feszültséget; minden munkához ugyanaz", "Hűti a vezetéket; ideiglenes, mert drága"], "a": "Ha mégis feszültség kerülne a vezetékre, ne az emberen, hanem ezen a vastag fémúton folyjon a földbe, és akkora áram induljon, hogy a védelmek lekapcsoljanak. Ideiglenes: csak erre a munkára létesítik, és a végén elbontják."}, {"id": "F11", "d": "F", "q": "Mi a két munkavégzési övezet, és mitől függ a nagyságuk?", "o": ["Feszültség alatti munkavégzési + közelítési övezet; a feszültséggel nőnek", "Ugyanez, a hőmérséklettel nőnek", "Belső és külső övezet, fix 1 m", "Piros és zöld zóna, a munkaidővel nőnek"], "a": "Belső: feszültség alatti munkavégzési övezet (ide behatolni, akár szerszámmal, feszültség alatti munka). Külső: közelítési övezet (feszültséghez közeli munka). Mindkettő a feszültséggel nő."}, {"id": "F12", "d": "F", "q": "Miért kell legalább két ember, és mi a második ember feladata?", "o": ["Az áramütött nem tud segítséget hívni; a második vigyáz", "Gyorsabban végeznek; a második adogat", "A második dokumentál és fényképez", "Szabály szerint 3 fő kell"], "a": "Mert az áramütést szenvedett nem tud segítséget hívni. Legalább kétfős csoport kell (egy legalább IV., a többiek legalább III. csoportos, kijelölt vezetővel). A párban egyikük dolgozik, a másik vigyáz, és nem végezhet figyelmet elvonó munkát."}, {"id": "G1", "d": "G", "q": "Mit véd a kismegszakító – és mit nem?", "o": ["A vezetéket (tűz ellen), az embert nem", "Az embert az áramütéstől", "A vezetéket és az embert is", "A fogyasztásmérőt"], "a": "A falban lévő vezetéket védi túlterhelés és zárlat ellen, vagyis a tűz ellen. Az embert nem: a testen átfolyó áram nagyságrendekkel kisebb annál, ami kioldaná."}, {"id": "G2", "d": "G", "q": "Fogalmazd meg egyetlen mondatban az áramütés elleni védelem alapszabályát!", "o": ["Aktív rész ne legyen hozzáférhető, hozzáférhető rész ne legyen veszélyes", "Minden áramkörre kerüljön áram-védőkapcsoló", "Minden fémrészt földelni kell", "Semmi ne legyen 50 V fölött"], "a": "A veszélyes aktív részek ne legyenek hozzáférhetők, és a hozzáférhető vezetőképes részek ne legyenek veszélyesek, se normál állapotban, se egyszeres hiba esetén."}, {"id": "G3", "d": "G", "q": "Mi a különbség az alapvédelem, a hibavédelem és a kiegészítő védelem között?", "o": ["Alap: szigetelés · hiba: ha az első réteg csődöt mond · kiegészítő: 30 mA RCD", "Alap: RCD · hiba: szigetelés · kiegészítő: földelés", "Alap: biztosíték · hiba: RCD · kiegészítő: szigetelés", "A három ugyanaz, más néven"], "a": "Alapvédelem: a normál esetre, szigetelés, burkolat. Hibavédelem: amikor az első réteg csődöt mond, például fémház kerül feszültség alá. Kiegészítő védelem: a 30 mA-es áram-védőkapcsoló, amely az emberi hibát és a kopást fogja meg, de nem helyettesít."}, {"id": "G4", "d": "G", "q": "Mi a védővezető feladata, ha békeidőben nem visz áramot?", "o": ["Hibánál kis ellenállású utat ad, hogy nagy áram és lekapcsolás legyen", "Üzem közben a visszatérő áramot viszi", "Villámvédelemként működik", "A fogyasztást méri"], "a": "A hiba pillanatában előre megépített, kis ellenállású utat ad a fémháztól vissza a forrásig. Így nagy hibaáram folyik, és a védelem le tud kapcsolni."}, {"id": "G5", "d": "G", "q": "Miért kell a saját földelőrúddal ellátott háznál áram-védőkapcsoló, míg máshol a túláramvédelem is elég lehet?", "o": ["TT: föld rossz vezető, kicsi a hibaáram · TN: fémes út, nagy áram", "TT: fémes út · TN: a földön át záródik", "TT-ben nagyobb a hibaáram", "A kettő között nincs különbség"], "a": "Saját földelőrúdnál (TT) a hibaáram a földön át záródik, a föld rossz vezető, az áram kicsi, a biztosíték észre sem venné. Ahol a hálózat hozza a védőföldelést (TN), a hibaáram fémes úton tér vissza, nagy, és a túláramvédelem is lekapcsolja."}, {"id": "G6", "d": "G", "q": "Mennyi a leghosszabb megengedett lekapcsolási idő egy 230 V-os lakóhálózat dugaljas végáramkörén a kétféle földelési megoldásnál?", "o": ["0,4 s (TN) és 0,2 s (TT)", "0,2 s (TN) és 0,4 s (TT)", "5 s (TN) és 1 s (TT)", "1 s (TN) és 0,1 s (TT)"], "a": "TN (a hálózat hozza a földelést): 0,4 s. TT (saját földelőrúd): 0,2 s. Elosztó áramköröknél 5 s, illetve 1 s."}, {"id": "G7", "d": "G", "q": "Mit fejez ki a két alapvető méretezési feltétel: mit kell nagynak és mit kicsinek tartani?", "o": ["Hibaáram elég nagy legyen, érintési feszültség elég kicsi", "Hibaáram kicsi legyen, feszültség nagy", "Mindkettő a lehető legkisebb legyen", "Csak az áram számít, a feszültség nem"], "a": "A hibaáram legyen elég nagy, hogy a védelem megmozduljon (Zs × Ia ≤ U0), és a hiba alatt megjelenő feszültség legyen elég kicsi, hogy addig se legyen halálos (RA × IΔn ≤ 50 V)."}, {"id": "G8", "d": "G", "q": "Mely három esetben kötelező a legfeljebb 30 mA-es áram-védőkapcsolóval megvalósított kiegészítő védelem?", "o": ["≤32 A dugaljak, kültéri hordozható gépek, lakás világítási körei", "Minden áramkör, tűzhely, bojler", "Csak a fürdőszoba", "≤16 A dugaljak, ipari gépek, kerti lámpák"], "a": "1) Legfeljebb 32 A-es, általános használatú dugaljak. 2) Szabadtéren használt hordozható készülékek. 3) Lakások világítási végáramkörei."}, {"id": "G9", "d": "G", "q": "Miért nem helyettesíti az áram-védőkapcsoló a többi védelmi módot?", "o": ["Csak kiegészítő védelem, egyedül nem fogadható el", "Mert túl lassan old ki", "Mert túl drága", "Valójában helyettesíti a többit"], "a": "Kiegészítő védelem: nem fogadható el a védelem egyetlen módjaként, és nem teszi feleslegessé a szigetelést, a védővezetőt, a lekapcsolást. A kopást és a gondatlanságot fogja meg, a tervezés hiányát nem."}, {"id": "G10", "d": "G", "q": "Miért kötik össze a pincében a bejövő fémcsöveket – mit szüntet meg ez a megoldás?", "o": ["Egyenpotenciálú összekötés: ne legyen köztük feszültségkülönbség", "Villámvédelem a csövekre", "Korrózióvédelem", "Hiba esetén lekapcsol"], "a": "Védő egyenpotenciálú összekötés: az egyszerre megfogható fémek között nem alakulhat ki feszültségkülönbség. Nem kapcsol le semmit, hanem megszünteti a veszély feltételét."}, {"id": "G11", "d": "G", "q": "Mi a különbség a kétféle törpefeszültségű rendszer között, és hol a feszültséghatár száraz, illetve nedves körülmények között?", "o": ["SELV földtől elválasztott, PELV földelhető · száraz 25/60 V, nedves 12/30 V", "PELV elválasztott, SELV földelhető · száraz 25/60 V, nedves 12/30 V", "SELV földtől elválasztott · száraz 50/120 V, nedves 25/60 V", "Nincs különbség · mindenhol 50/120 V"], "a": "SELV: szigorúan el kell választani a földtől. PELV: földelhető. Mindkettő határa 50 V AC / 120 V DC. Száraz helyen 25 V AC / 60 V DC alatt nem kell érintés elleni burkolat, nedves helyen vagy vízbe merülve 12 V / 30 V a határ."}, {"id": "G12", "d": "G", "q": "Miért nem szabad kapcsolót építeni az egyesített nulla- és védővezetőbe, és miért kell sok ponton földelni?", "o": ["Szakadáskor fémházak fázisfeszültségre kerülhetnek; <10 Ω, sok ponton", "Túl nagy áram folyna rajta; 100 Ω, egy ponton", "A kapcsoló szikrázna; nem kell földelni", "Drágább lenne; elég egyszer földelni"], "a": "Ha ez a kettős feladatú (PEN) vezető megszakad, a fémházak a fázisfeszültség közelébe kerülhetnek: „a hiba nem hangos, csak halálos”. Ezért nincs benne kapcsoló, és a potenciálját sok ponton, 10 ohmnál kisebb földeléssel kötik a talajhoz."}, {"id": "G13", "d": "G", "q": "Miért nem használható új épület felszálló fővezetékében egyesített nulla- és védővezető?", "o": ["Kóboráram: korrózió, elektronikai zavar, PEN-szakadás veszélye", "Túl drága lenne", "Nem szabványos a színe", "Túl vastag a felszálló aknába"], "a": "Az üzemi áram egy része a bekötött fémszerkezeteken záródik (kóboráram), ami korrodál és zavarja az elektronikát, és ott a PEN-szakadás veszélye is. Ezért új felszálló fővezetékben PEN-vezető nem használható."}, {"id": "G14", "d": "G", "q": "Mit jelent a szigetüzem-védelem, és miért közvetlen életvédelmi funkció?", "o": ["Hálózat kiesésekor az inverter leáll, és védi a szerelőt", "Az inverter szigeteli a napelemet", "Túlfeszültség ellen védi a házat", "Lopás ellen védi a termelést"], "a": "Ha elmegy a hálózat, az inverternek magától le kell állnia, nehogy életben tartson egy leválasztott vezetékszakaszt. Azt a szerelőt védi, aki azt hiszi, feszültségmentes vezetéken dolgozik."}, {"id": "H1", "d": "H", "q": "Sorolj fel három tényt, amely az egyetlen nagy, összefüggő rendszer mellett szól, és mondd meg, melyik a legerősebb!", "o": ["Közös tartalék a legerősebb: szerkezeti előny, sziget nem tudja lemásolni", "Az a legerősebb, hogy a nagy rendszer soha nem omlik össze", "Az a legerősebb, hogy a napelem drága", "Egyik sem erős, mindegyik csak vélemény"], "a": "Minta: 3000 MW közös tartalék több mint 1000 GW mellett; 38 év időjárási adata szerint kontinensnyi területen rövidebbek a szűkös időszakok; hálózatbővítés nélkül kb. ⅓-dal drágább a rendszer. (Még: kohó, adatközpont; ibériai helyreállítás.) Legerősebb: a megosztott tartalék, mert szerkezeti előny, amit sziget nem tud lemásolni."}, {"id": "H2", "d": "H", "q": "Sorolj fel három tényt, amely az önálló szigetek mellett szól, és mondd meg, melyik a legsérülékenyebb!", "o": ["Az ár-érv a legsérülékenyebb: a 12 hetes szezonális tárolás drága", "A „hiba nem terjed” a legsérülékenyebb", "A hálózatalkotó inverter a legsérülékenyebb", "Egyik sem sérülékeny"], "a": "Minta: napelem −90%, kb. 4 cent/kWh, akkumulátor −93%; a hiba nem terjed; ott termel, ahol fogyasztanak; hálózatalkotó inverterek (Hornsdale 150 MW, Blackhillock 300 MW). Legsérülékenyebb: az árakra épülő érv, mert a napi tárolás olcsó, de a 12 hetes, szezonális tárolás nem."}, {"id": "H3", "d": "H", "q": "A kontinentális szinkronterületen 3000 MW elsődleges tartalék van. Mit mondana ez a szám, ha a területet ötven önálló szigetre bontanánk?", "o": ["Mind a saját legnagyobb gépére tart tartalékot → sokszoros (~16×)", "Ugyanúgy 3000 MW maradna összesen", "Ötvenszer kevesebb tartalék kellene", "Szigeteknek egyáltalán nem kell tartalék"], "a": "A tartalékot a legnagyobb egység mérete szabja meg, így minden sziget a saját legnagyobb gépére tartana tartalékot. Szemléltetés: 50 × 1 GW = 50 GW, kb. 16× több. Ellenérv: egy kis szigetben a legnagyobb egység is kicsi."}, {"id": "H4", "d": "H", "q": "Egyetlen ismert szigetrendszer sem éri el éves szinten a teljes önellátást. Ez cáfolja a B tervet, vagy csak a mai technika határát mutatja?", "o": ["A mai határt mutatja: a szezonális tárolás a szűk keresztmetszet", "Végleg cáfolja, El Hierro sosem ment 100%-on", "El Hierro már egész évben 100% megújuló", "Nem releváns, mert ezek szigetek"], "a": "Cáfolat-olvasat: éves szinten 50–70%, fosszilis tartalékkal, és csak néhány ezer fogyasztóra (El Hierro 56,5%, 9 dízel). Határ-olvasat: El Hierro 2019-ben kb. 24–25 napig ment 100%-ban megújulóból, a tárolás ára gyorsan esik. Erős válasz: a határ ma a szezonális tárolás, nem a napi."}, {"id": "H5", "d": "H", "q": "A 2025-ös ibériai áramkimaradás inkább az összekapcsoltság ellen vagy mellette szóló érv? Mindkét olvasat, aztán válassz!", "o": ["Mindkét olvasat védhető; indoklással választani kell", "Egyértelműen ellene, a méret okozta", "Egyértelműen mellette, mert semmi baj nem lett", "Kibertámadás volt, nem számít"], "a": "Ellene: a közös rendszer közös kockázat; 50–60 millió ember, kb. 10 óra, kaszkádszerű lekapcsolódás. Mellette: az ok nem a méret, hanem a hiányzó dinamikus feszültségszabályozás és a kézi söntfojtók; a visszaindításban a francia és a marokkói összeköttetés segített; 20 éve nem volt ilyen. Választás: indokolva, egyikre."}, {"id": "H6", "d": "H", "q": "A szélcsendes, borult időszak ritkán tart két hétnél tovább – mégis miért tizenkét hetes időszak méretezi a tárolót?", "o": ["Több egymást követő szűkös időszak halmozott hiánya", "A tárolók 12 hétig töltődnek fel", "Biztonsági szorzó a két hétre", "A tél pontosan 12 hétig tart"], "a": "Mert a tárolót nem egyetlen szűkös időszakra, hanem több egymást követő időszak halmozott hiányára kell méretezni. Német elemzés: 12 hét a meghatározó, a kapacitás kb. háromszorosa annak, amit a legszűkebb két hét kívánna."}, {"id": "H7", "d": "H", "q": "Ha a hálózatbővítés hasznának nagy része már a beruházás kisebbik felével elérhető, mit jelent ez a két terv közötti választásra nézve?", "o": ["Mérsékelt hálózat az optimum: 44% → 85% haszon, hibrid felé mutat", "Maximális hálózat kell, minden km megéri", "Hálózat nem kell, csak szigetek", "A haszon arányosan nő a beruházással"], "a": "A haszon 85%-a már a hálózati volumen 44%-ával megvan: a hálózat sokat ér, de a hozama gyorsan csökken. Az optimum egy mérsékelt, nem maximális hálózat, ami a hibrid felé mutat. De nulla bővítéssel a rendszer kb. ⅓-dal drágább."}, {"id": "H8", "d": "H", "q": "Egy alumíniumkohó és egy adatközpont melyik tervben jár jobban? És egy falusi utca? És egy kórház?", "o": ["Kohó/adatközpont: A · falu: B felé · kórház: mindkettő", "Kohó: B · falu: A · kórház: B", "Mindenki az A tervben jár jobban", "Mindenki a B tervben jár jobban"], "a": "Kohó, adatközpont: az A tervben, mert folyamatosak, nem várhatnak a szélre (kohó: 1 óránál rövidebb kiesés kb. 900 €/MWh; AI-adatközpont 10× tőkeigényesebb). Falusi utca: a B felé, helyi termelés a tetőn. Kórház: mindkettő, hálózat és saját szigetüzemi képesség."}, {"id": "H9", "d": "H", "q": "Hálózatalkotó inverterrel ma már tehetetlenség is előállítható forgó tömeg nélkül. Melyik terv érvrendszeréből vesz el ez többet?", "o": ["Az A tervéből: tehetetlenséget már nem csak forgó tömeg ad", "A B tervéből: az inverter drága", "Egyikből sem, ez nem változtat semmin", "Mindkettőből pontosan ugyanannyit"], "a": "Az A tervéből, mert a „tehetetlenséget csak forgó tömeg adhat” érv már nem áll. De a szolgáltatást meg kell vásárolni, és megosztva olcsóbb lehet: „ha úgyis meg kell venni, számít-e, hol vesszük meg?”"}, {"id": "H10", "d": "H", "q": "Hol húznád meg a határt a közös rendszer és az önálló sziget között: háznál, utcánál, településnél, régiónál vagy országnál? Mi történik a határ két oldalán?", "o": ["Bármelyik jó, ha indokolod és megmondod, mi van a két oldalon", "Csak az ország lehet a határ", "Csak a ház lehet a határ", "Nem kell határt húzni"], "a": "Nincs egyetlen jó válasz, indokolni kell. Példa: a cella a település vagy városrész; belül napi egyensúly, helyi termelés és tárolás, vészhelyzeti szigetüzem; kívül közös frekvencia, tartalék, szezonális kiegyenlítés és az ipar ellátása."}, {"id": "H11", "d": "H", "q": "Ha a te válaszod az, hogy „mind a kettő”, pontosan mit jelent ez: melyik feladatot végzi a közös rendszer, és melyiket a sziget?", "o": ["Közös: frekvencia, tartalék, szezon, ipar · sziget: napi egyensúly, helyi, vészüzem", "Közös: napi egyensúly · sziget: frekvencia és tartalék", "Mindent a közös rendszer csinál", "Mindent a sziget csinál"], "a": "Közös rendszer: frekvencia, tartalék, szezonális kiegyenlítés, nagy ipari fogyasztók, helyreállítás. Sziget: napi egyensúly, helyi termelés és tárolás, kritikus intézmények vészhelyzeti szigetüzeme. Tesla: „mind a kettő” csak akkor okos válasz, ha megmondod, hol a határ."}, {"id": "H12", "d": "H", "q": "Mit tartasz drágábbnak: a bizonytalanságot vagy a függőséget? Ez hogyan dönti el a többit?", "o": ["Bizonytalanság drágább → közös · függőség drágább → szigetek", "Bizonytalanság drágább → szigetek · függőség drágább → közös", "Képlettel pontosan kiszámolható", "Mindig a sziget a jobb"], "a": "Ha a bizonytalanság drágább: közös rendszer, ahol mindenki keveset fizet mindenki biztonságáért. Ha a függőség drágább: önálló szigetek, minden szabadsággal és magánnyal. Tesla: ezt nem lehet kiszámolni, vállalni kell, és meg kell mondani, hol a határ."}, {"id": "S1", "d": "S", "q": "Milyen hőmérsékleten és teherrel kell számolni a szabadvezeték télen mértékadó állapotánál?", "o": ["−5 °C, jégteher, szél nélkül", "−20 °C, erős szél", "0 °C, hóteher", "−5 °C, szél, jég nélkül"], "a": "−5 °C körül, jégteherrel, szél nélkül"}, {"id": "S2", "d": "S", "q": "Hány méter a szabadvezeték legkisebb talajtávolsága falra szerelt szigetelt vezetéknél?", "o": ["3 m", "2 m", "4 m", "5,5 m"], "a": "3 m"}, {"id": "S3", "d": "S", "q": "Hány méter a talajtávolság kertben, külterületen, behajtónál?", "o": ["5 m", "4 m", "6 m", "3 m"], "a": "5 m"}, {"id": "S4", "d": "S", "q": "Mekkora a fázis–nulla és a fázis–fázis feszültség?", "o": ["230 V / 400 V", "220 V / 380 V", "230 V / 690 V", "110 V / 230 V"], "a": "230 V és 400 V"}, {"id": "S5", "d": "S", "q": "Melyik évben készült a Zipernowsky–Bláthy–Déri transzformátor?", "o": ["1885", "1878", "1891", "1896"], "a": "1885 (Ganz-gyár)"}, {"id": "S6", "d": "S", "q": "Melyik évben alkotta meg Bláthy az indukciós fogyasztásmérőt?", "o": ["1889", "1885", "1895", "1901"], "a": "1889"}, {"id": "S7", "d": "S", "q": "Melyik évben készült Parsons gőzturbinája?", "o": ["1884", "1878", "1892", "1900"], "a": "1884"}, {"id": "S8", "d": "S", "q": "Melyik évben indult a Pearl Street-i telep, és hány voltos volt?", "o": ["1882, 110 V DC", "1879, 220 V DC", "1886, 110 V AC", "1882, 230 V AC"], "a": "1882. szeptember 4., 110 V egyenáram, kb. 1 négyzetmérföld"}, {"id": "S9", "d": "S", "q": "Miesbach–München: év, hossz, hatásfok?", "o": ["1882 · 57 km · ~25%", "1891 · 175 km · ~75%", "1882 · 100 km · ~50%", "1885 · 57 km · ~75%"], "a": "1882, 57 km, kb. 25% (a teljesítmény ¾-e elveszett)"}, {"id": "S10", "d": "S", "q": "Lauffen–Frankfurt: év, hossz, feszültség, hatásfok?", "o": ["1891 · ~175 km · 15 kV · >75%", "1882 · 57 km · 2 kV · ~25%", "1891 · 100 km · 30 kV · ~90%", "1895 · 175 km · 15 kV · ~50%"], "a": "1891, kb. 175 km, 15 kV, több mint 75%"}, {"id": "S11", "d": "S", "q": "Ferranti deptfordi erőműve: mikor indult, mekkora feszültséggel?", "o": ["1889, 10 kV", "1885, 2 kV", "1891, 15 kV", "1896, 20 kV"], "a": "1889 novembere, 10 kV"}, {"id": "S12", "d": "S", "q": "Niagara: mikor indultak a gépek, és mikor ért az áram Buffalóba?", "o": ["1895; 1896, 25 Hz", "1891; 1893, 60 Hz", "1896; 1900, 50 Hz", "1882; 1885, 25 Hz"], "a": "1895; 1896. november 15., kb. 22 mérföld, 25 Hz"}, {"id": "S13", "d": "S", "q": "Mikor írta fel Kelvin a gazdaságos keresztmetszet szabályát?", "o": ["1881", "1871", "1891", "1865"], "a": "1881"}, {"id": "S14", "d": "S", "q": "Mikor vette az Oerlikon és az AEG az 50 Hz-et alapnak, és mikor lett hivatalos német szabvány?", "o": ["Oerlikon ~1890, AEG 1896, szabvány 1930", "1880, 1890, szabvány 1920", "1900, 1910, szabvány 1950", "1891, 1896, szabvány 1945"], "a": "Oerlikon kb. 1890, AEG 1896, szabvány 1930"}, {"id": "S15", "d": "S", "q": "Mikor vitte Insull Chicagóba a sokféleség (díjszabás) gondolatát Angliából?", "o": ["1894", "1882", "1904", "1912"], "a": "1894"}, {"id": "S16", "d": "S", "q": "Arrhenius: melyik év, és hány fokot számolt kétszeres CO₂-ra?", "o": ["1896, 5–6 °C", "1896, 1–2 °C", "1938, 3 °C", "1956, 5–6 °C"], "a": "1896, 5–6 °C"}, {"id": "S17", "d": "S", "q": "Fritts szelénes cellája: év és hatásfok?", "o": ["1883, 1% alatt", "1905, ~6%", "1883, ~10%", "1954, 1% alatt"], "a": "1883, 1% alatt"}, {"id": "S18", "d": "S", "q": "Einstein fotoeffektusa és a Nobel-díj éve?", "o": ["1905 / 1921", "1905 / 1905", "1915 / 1921", "1921 / 1933"], "a": "1905, illetve 1921"}, {"id": "S19", "d": "S", "q": "Bell Labs első gyakorlati szilícium napeleme: év és hatásfok?", "o": ["1954, ~6%", "1958, ~15%", "1905, ~1%", "1962, ~6%"], "a": "1954, kb. 6%"}, {"id": "S20", "d": "S", "q": "Mai napelemmodulok hatásfoka?", "o": ["18,9–24,8%, átlag 22,7%", "10–15%, átlag 12%", "30–40%, átlag 35%", "5–8%, átlag 6%"], "a": "18,9–24,8%, súlyozott átlag 22,7%"}, {"id": "S21", "d": "S", "q": "Hányszor nyúlik és húzódik össze másodpercenként a transzformátor vasteste 50 Hz-en?", "o": ["100", "50", "200", "25"], "a": "100-szor"}, {"id": "S22", "d": "S", "q": "Mennyi kontinentális Európa elsődleges tartaléka, és mekkora gépparkhoz?", "o": ["3000 MW, >1000 GW", "1000 MW, >300 GW", "300 MW, >100 GW", "30 000 MW, >5000 GW"], "a": "3000 MW, több mint 1000 GW"}, {"id": "S23", "d": "S", "q": "Hány év időjárási adatára épül a Kittel–Schill-elemzés?", "o": ["38 év", "10 év", "20 év", "100 év"], "a": "38 év"}, {"id": "S24", "d": "S", "q": "Mennyivel nő a rendszer költsége, ha nulla a hálózatbővítés?", "o": ["kb. ⅓-dal", "kb. 10%-kal", "a kétszeresére", "kb. 5%-kal"], "a": "kb. egyharmaddal"}, {"id": "S25", "d": "S", "q": "A hálózatbővítés hasznának hány százaléka érhető el a volumen hány százalékával?", "o": ["85%-a, 44%-kal", "50%-a, 50%-kal", "44%-a, 85%-kal", "90%-a, 10%-kal"], "a": "85%-a, 44%-kal"}, {"id": "S26", "d": "S", "q": "Mennyi villamos energia kell egy tonna alumíniumhoz?", "o": ["13–16 MWh", "1–2 MWh", "50–60 MWh", "130–160 MWh"], "a": "13–16 MWh"}, {"id": "S27", "d": "S", "q": "Mennyibe kerül a kohónak egy óránál rövidebb megszakítás?", "o": ["kb. 900 €/MWh", "kb. 90 €/MWh", "kb. 9000 €/MWh", "kb. 50 €/MWh"], "a": "kb. 900 € megawattóránként"}, {"id": "S28", "d": "S", "q": "Mekkora ma az adatközpontok részaránya a világ villamosenergia-fogyasztásából?", "o": ["~1,5%, évtized végére 2× fölé nőhet", "~10%, stagnál", "~0,1%, csökken", "~5%, felére csökken"], "a": "kb. 1,5%, az évtized végére a kétszerese fölé nőhet"}, {"id": "S29", "d": "S", "q": "Hányszor tőkeigényesebb egy AI-adatközpont, mint egy alumíniumkohó?", "o": ["10×", "2×", "100×", "ugyanannyira"], "a": "10×"}, {"id": "S30", "d": "S", "q": "Az ibériai összeomlás pontos ideje?", "o": ["2025. április 28., 12:33", "2024. április 28., 12:33", "2025. július 28., 18:33", "2025. január 12., 08:15"], "a": "2025. április 28., 12:33"}, {"id": "S31", "d": "S", "q": "Hány embert érintett és meddig tartott az ibériai áramszünet?", "o": ["50–60 millió, ~10 óra", "5 millió, ~2 nap", "100 millió, ~1 óra", "20 millió, ~3 nap"], "a": "kb. 50–60 millió (becslés), a legtöbb helyen kb. 10 óra"}, {"id": "S32", "d": "S", "q": "Mennyit csökkent a nagy léptékű napelemes termelés költsége 2010 óta, és mennyi 2024-ben?", "o": ["~90%, ~4 cent/kWh", "~50%, ~10 cent/kWh", "~99%, ~1 cent/kWh", "~30%, ~20 cent/kWh"], "a": "kb. 90%, kb. 4 cent/kWh"}, {"id": "S33", "d": "S", "q": "Mennyivel olcsóbb reálértéken a lítiumion akkucsomag, mint 2010-ben?", "o": ["93%", "50%", "70%", "99%"], "a": "93%-kal"}, {"id": "S34", "d": "S", "q": "Hornsdale: teljesítmény, év, az inerciahiány hány százaléka?", "o": ["150 MW · 2022 · ~15%", "100 MW · 2017 · ~50%", "300 MW · 2022 · ~15%", "150 MW · 2025 · ~100%"], "a": "150 MW, 2022, kb. 15%"}, {"id": "S35", "d": "S", "q": "Blackhillock (Skócia) akkumulátor mérete?", "o": ["300 MW / 600 MWh", "150 MW / 300 MWh", "600 MW / 1200 MWh", "100 MW / 400 MWh"], "a": "300 MW / 600 MWh"}, {"id": "S36", "d": "S", "q": "El Hierro megújuló részaránya 2018-ban és hány dízelegység áll tartalékban?", "o": ["56,5%, 9 dízel", "100%, 0 dízel", "35%, 4 dízel", "75%, 2 dízel"], "a": "56,5%, 9 dízel"}, {"id": "S37", "d": "S", "q": "Meddig ment El Hierro 2019 nyarán megszakítás nélkül teljesen megújulóból?", "o": ["~24–25 nap", "~2 nap", "~6 hónap", "~1 év"], "a": "csaknem 25 napig (a REE szerint 24 nap)"}, {"id": "S38", "d": "S", "q": "King Island megújuló részaránya és dízelgépei?", "o": [">65%, 5 dízel", "100%, 0 dízel", "~40%, 2 dízel", "~90%, 9 dízel"], "a": "több mint 65%, 5 dízel"}, {"id": "S39", "d": "S", "q": "Hány hetes időszak méretezi a tárolót egy teljesen megújuló német rendszerben, és hányszorosa ez a két hétnek?", "o": ["12 hét, ~3×", "2 hét, 1×", "6 hét, ~2×", "52 hét, ~10×"], "a": "12 hét, kb. 3×"}, {"id": "S40", "d": "S", "q": "Meddig tartott a legextrémebb szűkös időszak Németországban, és mennyi egy tökéletesen összekapcsolt Európában?", "o": [">100 nap; 55 nap", "14 nap; 7 nap", "55 nap; >100 nap", "1 év; 6 hónap"], "a": "több mint 100 nap, illetve 55 nap"}, {"id": "S41", "d": "S", "q": "Mekkora a kiserőmű és a HMKE határa?", "o": ["<50 MW; ≤50 kVA", "<20 MW; ≤20 kW", "<100 MW; ≤10 kVA", "<5 MW; ≤50 kW"], "a": "kiserőmű < 50 MW; HMKE ≤ 50 kVA, kisfeszültségen"}, {"id": "S42", "d": "S", "q": "Mennyi az ötvenes PEN-vezető földelési ellenállásának felső határa?", "o": ["10 Ω alatt", "1 Ω alatt", "100 Ω alatt", "50 Ω alatt"], "a": "10 ohm alatt, sok ponton"}, {"id": "S43", "d": "S", "q": "Hányszor járhatnak legfeljebb egy elzárt kezelőtérben műszakonként?", "o": ["2×", "1×", "4×", "8×"], "a": "legfeljebb kétszer"}, {"id": "S44", "d": "S", "q": "Milyen gyakran érdemes megnyomni az áram-védőkapcsoló próbagombját?", "o": ["félévente", "évente", "havonta", "ötévente"], "a": "félévente"}, {"id": "S45", "d": "S", "q": "Mennyi az időleges feszültségváltozás felső határa?", "o": ["15%", "2%", "5%", "30%"], "a": "15%"}, {"id": "S46", "d": "S", "q": "Mennyi a fázisaszimmetria-tényező a méretezési képletben?", "o": ["0,75", "0,5", "1,0", "0,95"], "a": "0,75 (1/0,75-ös szorzó)"}], "tips": [{"q": "Melyik évben készült el a Zipernowsky–Bláthy–Déri transzformátor a Ganz-gyárban?", "v": 1885, "u": "év"}, {"q": "Melyik évben alkotta meg Bláthy az indukciós fogyasztásmérőt?", "v": 1889, "u": "év"}, {"q": "Melyik évben készült Parsons első gőzturbinája?", "v": 1884, "u": "év"}, {"q": "Hány voltos egyenárammal indult a Pearl Street-i telep?", "v": 110, "u": "V"}, {"q": "Melyik évben indult a Pearl Street-i telep New Yorkban?", "v": 1882, "u": "év"}, {"q": "Hány km hosszú volt a Miesbach–München vezeték?", "v": 57, "u": "km"}, {"q": "Kb. hány km hosszú volt a Lauffen–Frankfurt átvitel (1891)?", "v": 175, "u": "km"}, {"q": "Hány kV-tal ment a Lauffen–Frankfurt átvitel?", "v": 15, "u": "kV"}, {"q": "Hány kV-os volt Ferranti deptfordi erőműve?", "v": 10, "u": "kV"}, {"q": "Melyik évben ért a niagarai áram Buffalóba?", "v": 1896, "u": "év"}, {"q": "Hány Hz-es volt a niagarai rendszer?", "v": 25, "u": "Hz"}, {"q": "Melyik évben írta fel Kelvin a gazdaságos keresztmetszet szabályát?", "v": 1881, "u": "év"}, {"q": "Melyik évben lett az 50 Hz hivatalos német szabvány?", "v": 1930, "u": "év"}, {"q": "Melyik évben vitte Insull Chicagóba a sokféleség-alapú díjszabást?", "v": 1894, "u": "év"}, {"q": "Melyik évben számolt Arrhenius a CO₂ melegítő hatásával?", "v": 1896, "u": "év"}, {"q": "Melyik évben készült Fritts szelénes napelemcellája?", "v": 1883, "u": "év"}, {"q": "Melyik évben kapta Einstein a Nobel-díjat (fotoeffektus)?", "v": 1921, "u": "év"}, {"q": "Melyik évben készült a Bell Labs első gyakorlati szilícium napeleme?", "v": 1954, "u": "év"}, {"q": "Hány százalék a mai napelemmodulok súlyozott átlagos hatásfoka?", "v": 22.7, "u": "%"}, {"q": "Hányszor nyúlik meg és húzódik össze másodpercenként egy 50 Hz-es transzformátor vasteste?", "v": 100, "u": "×/s"}, {"q": "Hány MW a kontinentális európai szinkronterület elsődleges tartaléka?", "v": 3000, "u": "MW"}, {"q": "Kb. hány GW-os gépparkot véd a kontinentális elsődleges tartalék?", "v": 1000, "u": "GW"}, {"q": "Hány év időjárási adatára épül a Kittel–Schill-elemzés?", "v": 38, "u": "év"}, {"q": "A hálózatbővítés hasznának hány százaléka érhető el a volumen 44%-ával?", "v": 85, "u": "%"}, {"q": "Kb. hány euró/MWh egy alumíniumkohónak az egy óránál rövidebb kiesés?", "v": 900, "u": "€/MWh"}, {"q": "Hányszor tőkeigényesebb egy AI-adatközpont, mint egy alumíniumkohó?", "v": 10, "u": "×"}, {"q": "Kb. hány óráig tartott a 2025-ös ibériai áramszünet a legtöbb helyen?", "v": 10, "u": "óra"}, {"q": "Kb. hány millió embert érintett a 2025-ös ibériai áramszünet?", "v": 55, "u": "millió"}, {"q": "Hány százalékkal csökkent 2010 óta a nagy léptékű napelemes termelés költsége?", "v": 90, "u": "%"}, {"q": "Hány százalékkal olcsóbb reálértéken a lítiumion akkucsomag, mint 2010-ben?", "v": 93, "u": "%"}, {"q": "Hány MW-os a Hornsdale akkumulátor (Ausztrália)?", "v": 150, "u": "MW"}, {"q": "Hány MWh-s a skóciai Blackhillock akkumulátor?", "v": 600, "u": "MWh"}, {"q": "Hány százalék volt El Hierro megújuló részaránya 2018-ban?", "v": 56.5, "u": "%"}, {"q": "Hány dízelegység áll tartalékban El Hierrón?", "v": 9, "u": "db"}, {"q": "Hány napig ment El Hierro 2019 nyarán teljesen megújulóból (REE szerint)?", "v": 24, "u": "nap"}, {"q": "Hány dízelgép van King Islanden?", "v": 5, "u": "db"}, {"q": "Hány hetes időszak méretezi a tárolót egy teljesen megújuló német rendszerben?", "v": 12, "u": "hét"}, {"q": "Hány napig tartott a legextrémebb szűkös időszak egy tökéletesen összekapcsolt Európában?", "v": 55, "u": "nap"}, {"q": "Legfeljebb hány kVA lehet egy háztartási méretű kiserőmű?", "v": 50, "u": "kVA"}, {"q": "Hány MW alatt kiserőmű egy erőmű?", "v": 50, "u": "MW"}, {"q": "Hány kW-tal számol a méretezés egy háromfázisú lakásnál?", "v": 13.8, "u": "kW"}, {"q": "Hány kW-tal számol a méretezés egy egyfázisú lakásnál?", "v": 7.36, "u": "kW"}, {"q": "Hány méter a szabadvezeték legkisebb talajtávolsága belterületen, utak felett?", "v": 5.5, "u": "m"}, {"q": "Hány ezredmásodperc a leghosszabb lekapcsolási idő TN-rendszerű 230 V-os dugaljkörön?", "v": 400, "u": "ms"}, {"q": "Hány ezredmásodperc a leghosszabb lekapcsolási idő TT-rendszerű 230 V-os dugaljkörön?", "v": 200, "u": "ms"}, {"q": "Hány mA-es áram-védőkapcsoló kell a kiegészítő védelemhez?", "v": 30, "u": "mA"}, {"q": "Hány voltnál nem lehet nagyobb az RA × IΔn szorzat?", "v": 50, "u": "V"}, {"q": "Hány ohm alatti földelés kell a PEN-vezetőnek?", "v": 10, "u": "Ω"}, {"q": "Hány százalék feszültségesés engedhető meg összesen a csatlakozó szakaszokon?", "v": 2, "u": "%"}, {"q": "Hány V a fázis–fázis feszültség a kisfeszültségű hálózaton?", "v": 400, "u": "V"}, {"q": "Hány kV a hazai legnagyobb szokásos átviteli feszültség?", "v": 400, "u": "kV"}], "decks": {"A": "Amit az utcán is látni", "B": "A rendszer eredete", "C": "Felépítés és felelősségi határok", "D": "Egyensúly, mérés, irányítás", "E": "Megújulók, tárolás, rugalmasság", "F": "Üzemeltetés és munkavégzés", "G": "Áramütés elleni védelem", "H": "A nagy kérdés (vita)", "S": "Számbank"}};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PCOL = ["var(--p0)","var(--p1)","var(--p2)"];
+const BOTN = ["Tesla-bot","Edison-bot","Bláthy-bot"];
+const SPEED = +(new URLSearchParams(location.search).get("speed") || 1);
+const T_PICK = 12000 / SPEED, T_Q = 20000 / SPEED, T_TIP = 20000 / SPEED, T_RES = 4200 / SPEED;
+const EXP_ROUNDS = 3, BAT_ROUNDS = 3;
+
+/* ---------- map ---------- */
+const ROWS = [
+  ["Győr","Tatabánya","Budapest","Visonta","Miskolc"],
+  ["Sopron","Ajka","Fehérvár","Kecskemét","Debrecen","Nyíregyháza"],
+  ["Szombathely","Kaposvár","Paks","Szeged","Békéscsaba"],
+];
+const HR = 52, HW = Math.sqrt(3) * HR;
+const TILES = []; ROWS.forEach((r, ri) => r.forEach((n, ci) => {
+  TILES.push({ id: TILES.length, name: n, x: HW * (ci + (ri % 2 ? 0 : .5)) + HW / 2 + 6, y: ri * 1.5 * HR + HR + 6 });
+}));
+const NB = TILES.map(a => TILES.filter(b => b !== a && Math.hypot(a.x - b.x, a.y - b.y) < HW * 1.05).map(b => b.id));
+const CASTLES = [5, 10, 14]; // Sopron, Nyíregyháza, Szeged
+const VW = Math.ceil(HW * 6 + 12), VH = Math.ceil(HR * 2 + 1.5 * HR * 2 + 12);
+function hexPts(x, y){ let p = []; for (let i = 0; i < 6; i++){ const a = Math.PI / 180 * (60 * i - 30); p.push((x + (HR - 2) * Math.cos(a)).toFixed(1) + "," + (y + (HR - 2) * Math.sin(a)).toFixed(1)); } return p.join(" "); }
+
+/* ---------- shared rules ---------- */
+const alive = (S, p) => S.players[p] && !S.players[p].out;
+function myTiles(S, pid){ return S.tiles.filter(t => t.owner === pid).map(t => t.id); }
+function validPicks(S, pid){
+  const taken = new Set(Object.values(S.picks || {}));
+  const free = S.tiles.filter(t => t.owner === null && !taken.has(t.id)).map(t => t.id);
+  const mine = myTiles(S, pid).concat(S.picks && S.picks[pid] != null ? [S.picks[pid]] : []);
+  const adj = free.filter(id => NB[id].some(n => mine.includes(n)));
+  return adj.length ? adj : free;
+}
+function validTargets(S, pid){
+  const en = S.tiles.filter(t => t.owner !== null && t.owner !== pid && alive(S, t.owner)).map(t => t.id);
+  const mine = myTiles(S, pid);
+  const adj = en.filter(id => NB[id].some(n => mine.includes(n)));
+  return adj.length ? adj : en;
+}
+function score(S, pid){ return S.tiles.filter(t => t.owner === pid).reduce((s, t) => s + t.value, 0) + (S.players[pid].bonus || 0); }
+function fmt(v){ return String(v).replace(".", ","); }
+
+/* ---------- host engine ---------- */
+const H = { on:false, S:null, sec:{}, timer:null, conns:{}, mcDeck:[], tipDeck:[] };
+function shuf(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function drawMC(){ if (!H.mcDeck.length) H.mcDeck = shuf(DATA.mc.map((_, i) => i)); return DATA.mc[H.mcDeck.pop()]; }
+function drawTip(){ if (!H.tipDeck.length) H.tipDeck = shuf(DATA.tips.map((_, i) => i)); return DATA.tips[H.tipDeck.pop()]; }
+function log(t){ H.S.log.unshift(t); H.S.log = H.S.log.slice(0, 30); }
+function setPhase(ph, ms, fn){
+  const S = H.S; S.phase = ph; S.seq++; clearTimeout(H.timer);
+  S.dl = ms ? Date.now() + ms : 0;
+  if (ms){ const seq = S.seq; H.timer = setTimeout(() => { if (H.S.seq === seq) fn(); }, ms); }
+}
+function push(){
+  const S = H.S;
+  const msg = { t:"state", s:S, left: S.dl ? S.dl - Date.now() : 0 };
+  for (const pid in H.conns){ try { H.conns[pid].send(msg); } catch(e){} }
+  onState(JSON.parse(JSON.stringify(S)), msg.left);
+  bots();
+}
+function hostInit(name){
+  H.on = true;
+  H.S = { phase:"lobby", seq:0, dl:0, players:[{ name, bot:false }], tiles:[], picks:{}, log:[] };
+}
+function hostStart(){
+  const S = H.S;
+  while (S.players.length < 3) S.players.push({ name: BOTN[S.players.length], bot:true });
+  S.players.forEach(p => { p.bonus = 0; p.out = false; });
+  S.tiles = TILES.map(t => ({ id:t.id, owner:null, value:0, towers:0 }));
+  CASTLES.forEach((tid, i) => { Object.assign(S.tiles[tid], { owner:i, value:1000, towers:3 }); });
+  S.log = []; S.round = 0; S.ctx = null; S.att = null;
+  log("Indul a játék! Mindenkinek van egy vára (3 bástya).");
+  expRound();
+}
+function order(S, r){ const o = [0,1,2].filter(p => alive(S, p)); for (let i = 0; i < r % o.length; i++) o.push(o.shift()); return o; }
+function freeCount(S){ return S.tiles.filter(t => t.owner === null).length; }
+
+function expRound(){
+  const S = H.S; S.round++; S.picks = {}; S.order = order(S, S.round - 1); S.turn = 0;
+  nextPicker();
+}
+function nextPicker(){
+  const S = H.S;
+  const taken = Object.keys(S.picks).length;
+  if (S.turn >= S.order.length || freeCount(S) - taken <= 0) return expQ();
+  S.cur = S.order[S.turn];
+  setPhase("exp_pick", T_PICK, () => { const v = validPicks(H.S, H.S.cur); doPick(H.S.cur, v[Math.floor(Math.random() * v.length)]); });
+  push();
+}
+function doPick(pid, tile){
+  const S = H.S;
+  if (S.phase === "exp_pick"){
+    if (pid !== S.cur || !validPicks(S, pid).includes(tile)) return;
+    S.picks[pid] = tile; S.turn++; nextPicker();
+  } else if (S.phase === "tip_pick"){
+    if (pid !== S.cur || !validPicks(S, pid).includes(tile)) return;
+    Object.assign(S.tiles[tile], { owner:pid, value:200 });
+    log(S.players[pid].name + " elfoglalta: " + TILES[tile].name);
+    afterExp();
+  } else if (S.phase === "bat_pick"){
+    if (pid !== S.cur || !validTargets(S, pid).includes(tile)) return;
+    S.att = { a:pid, d:S.tiles[tile].owner, tile };
+    log(S.players[pid].name + " megtámadja: " + TILES[tile].name + " (" + S.players[S.att.d].name + ")");
+    askMC([pid, S.att.d], "bat");
+  }
+}
+function askMC(need, ctx){
+  const S = H.S; const c = drawMC(); const perm = shuf([0,1,2,3]);
+  H.sec = { correct: perm.indexOf(0), ans:{}, t0: Date.now() };
+  S.ctx = ctx; S.need = need; S.answered = {}; S.reveal = null;
+  S.q = { id:c.id, d:c.d, text:c.q, opts: perm.map(i => c.o[i]), expl:c.a };
+  setPhase("q", T_Q, revealMC); push();
+}
+function expQ(){
+  const S = H.S;
+  if (!Object.keys(S.picks).length) return afterExp();
+  askMC(S.order.slice(), "exp");
+}
+function doAnswer(pid, c){
+  const S = H.S;
+  if (S.phase !== "q" || !S.need.includes(pid) || S.answered[pid]) return;
+  H.sec.ans[pid] = { c, t: Date.now() - H.sec.t0 }; S.answered[pid] = true;
+  if (S.need.every(p => S.answered[p])) revealMC(); else push();
+}
+function revealMC(){
+  const S = H.S; const ok = p => H.sec.ans[p] && H.sec.ans[p].c === H.sec.correct;
+  S.reveal = { correct: H.sec.correct, ans: H.sec.ans, ok: Object.fromEntries(S.need.map(p => [p, ok(p)])) };
+  if (S.ctx === "exp"){
+    for (const p in S.picks){
+      const pid = +p, t = S.picks[p];
+      if (ok(pid)){ Object.assign(S.tiles[t], { owner:pid, value:200 }); log(S.players[pid].name + " ✓ megszerezte: " + TILES[t].name); }
+      else log(S.players[pid].name + " ✗ elvesztette: " + TILES[t].name);
+    }
+    S.picks = {};
+    setPhase("q_res", T_RES, afterExp);
+  } else {
+    const { a, d } = S.att;
+    if (ok(a) && ok(d)) setPhase("q_res", T_RES, () => askTip([a, d], "bat"));
+    else setPhase("q_res", T_RES, () => battleOutcome(ok(a) ? a : d));
+  }
+  push();
+}
+function afterExp(){
+  const S = H.S;
+  if (!freeCount(S)) return batStart();
+  if (S.round < EXP_ROUNDS) return expRound();
+  askTip(S.players.map((_, i) => i).filter(p => alive(S, p)), "exp");
+}
+function askTip(need, ctx){
+  const S = H.S; const t = drawTip();
+  H.sec = { v:t.v, ans:{}, t0: Date.now() };
+  S.ctx = ctx; S.need = need; S.answered = {}; S.reveal = null;
+  S.q = { text:t.q, unit:t.u };
+  setPhase("tip", T_TIP, revealTip); push();
+}
+function doTip(pid, v){
+  const S = H.S;
+  if (S.phase !== "tip" || !S.need.includes(pid) || S.answered[pid] || !isFinite(v)) return;
+  H.sec.ans[pid] = { v, t: Date.now() - H.sec.t0 }; S.answered[pid] = true;
+  if (S.need.every(p => S.answered[p])) revealTip(); else push();
+}
+function revealTip(){
+  const S = H.S, A = H.sec.ans, V = H.sec.v;
+  const rank = S.need.slice().sort((x, y) => {
+    const ax = A[x], ay = A[y];
+    if (!ax && !ay) return 0; if (!ax) return 1; if (!ay) return -1;
+    const dx = Math.abs(ax.v - V), dy = Math.abs(ay.v - V);
+    return dx !== dy ? dx - dy : ax.t - ay.t;
+  });
+  const w = rank[0];
+  S.reveal = { v:V, ans:A, rank, winner:w };
+  log("Tipp: " + fmt(V) + " " + S.q.unit + " — " + S.players[w].name + " volt a legközelebb");
+  if (S.ctx === "exp"){
+    setPhase("tip_res", T_RES, () => { H.S.cur = w; setPhase("tip_pick", T_PICK, () => { const v = validPicks(H.S, w); doPick(w, v[Math.floor(Math.random() * v.length)]); }); push(); });
+  } else setPhase("tip_res", T_RES, () => battleOutcome(w));
+  push();
+}
+function batStart(){
+  const S = H.S; S.round = 0; S.picks = {};
+  log("Minden terület gazdára talált — kezdődik a háború!");
+  batRound();
+}
+function batRound(){
+  const S = H.S; S.round++; S.order = order(S, S.round - 1); S.turn = 0; nextAttacker();
+}
+function nextAttacker(){
+  const S = H.S;
+  if (S.players.filter((_, i) => alive(S, i)).length < 2) return endGame();
+  while (S.turn < S.order.length && !alive(S, S.order[S.turn])) S.turn++;
+  if (S.turn >= S.order.length){ if (S.round >= BAT_ROUNDS) return endGame(); return batRound(); }
+  S.cur = S.order[S.turn]; S.att = null; S.q = null; S.reveal = null;
+  setPhase("bat_pick", T_PICK, () => { const v = validTargets(H.S, H.S.cur); doPick(H.S.cur, v[Math.floor(Math.random() * v.length)]); });
+  push();
+}
+function battleOutcome(w){
+  const S = H.S, { a, d, tile } = S.att, t = S.tiles[tile];
+  if (w === a){
+    if (t.towers > 0){
+      t.towers--;
+      if (t.towers === 0){
+        S.tiles.forEach(x => { if (x.owner === d) x.owner = a; });
+        S.players[d].out = true;
+        log("🏰 " + S.players[a].name + " bevette " + S.players[d].name + " várát — minden területe az övé!");
+      } else log(S.players[a].name + " ledöntött egy bástyát (" + t.towers + " maradt)");
+    } else {
+      t.owner = a; t.value = Math.max(t.value, 400);
+      log(S.players[a].name + " elfoglalta: " + TILES[tile].name + " (400)");
+    }
+    S.att.win = "a";
+  } else {
+    S.players[d].bonus += 100; S.att.win = "d";
+    log(S.players[d].name + " megvédte (+100)");
+  }
+  setPhase("bat_res", 2600 / SPEED, () => { H.S.turn++; nextAttacker(); });
+  push();
+}
+function endGame(){
+  const S = H.S;
+  S.att = null; S.picks = {};
+  S.final = S.players.map((_, i) => i).sort((x, y) => (S.players[x].out - S.players[y].out) || score(S, y) - score(S, x));
+  setPhase("end", 0); push();
+}
+function hostAct(pid, a){
+  if (!a) return;
+  if (a.type === "pick") doPick(pid, a.tile);
+  else if (a.type === "ans") doAnswer(pid, a.c);
+  else if (a.type === "tip") doTip(pid, +a.v);
+}
+/* bots */
+function bots(){
+  const S = H.S; if (!S || S.phase === "lobby" || S.phase === "end") return;
+  const seq = S.seq, later = (ms, f) => setTimeout(() => { if (H.S.seq === seq) f(); }, ms / SPEED);
+  const isBot = p => S.players[p] && S.players[p].bot;
+  if (["exp_pick","tip_pick","bat_pick"].includes(S.phase) && isBot(S.cur)){
+    const p = S.cur;
+    later(900 + Math.random() * 1200, () => {
+      let v = S.phase === "bat_pick" ? validTargets(H.S, p) : validPicks(H.S, p);
+      if (S.phase === "bat_pick"){ const nc = v.filter(id => !H.S.tiles[id].towers); if (nc.length && Math.random() < .75) v = nc; }
+      doPick(p, v[Math.floor(Math.random() * v.length)]);
+    });
+  }
+  if (S.phase === "q") S.need.filter(p => isBot(p) && !S.answered[p] && !H.sec["b" + p + seq]).forEach(p => {
+    H.sec["b" + p + seq] = 1;
+    later(2500 + Math.random() * 8000, () => { const right = Math.random() < (H.S.q.d === "S" ? .5 : .62); doAnswer(p, right ? H.sec.correct : [0,1,2,3].filter(i => i !== H.sec.correct)[Math.floor(Math.random() * 3)]); });
+  });
+  if (S.phase === "tip") S.need.filter(p => isBot(p) && !S.answered[p] && !H.sec["b" + p + seq]).forEach(p => {
+    H.sec["b" + p + seq] = 1;
+    later(3000 + Math.random() * 8000, () => {
+      const v = H.sec.v, g = (Math.random() + Math.random() + Math.random() - 1.5) * .25;
+      let x = v * (1 + g); x = v >= 100 ? Math.round(x) : Math.round(x * 10) / 10;
+      doTip(p, x);
+    });
+  });
+}
+
+/* ---------- network (PeerJS) ---------- */
+const NET = { peer:null, conn:null, role:null, pid:null };
+const PREFIX = "aramfoglalo26-";
+function peerOpts(){
+  const u = new URLSearchParams(location.search).get("peer");
+  if (!u) return { debug:0 };
+  const [host, port] = u.split(":");
+  return { host, port:+port || 9000, path:"/", secure:false, debug:0 };
+}
+function loadPeer(){
+  return new Promise((res, rej) => {
+    if (window.Peer) return res();
+    const s = document.createElement("script");
+    s.src = new URLSearchParams(location.search).get("peerlib") || "https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js";
+    s.onload = res; s.onerror = () => rej(new Error("load"));
+    document.head.appendChild(s);
+  });
+}
+function code4(){ const A = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for (let i = 0; i < 4; i++) s += A[Math.floor(Math.random() * A.length)]; return s; }
+async function hostOnline(name){
+  await loadPeer();
+  const code = code4();
+  return new Promise((res, rej) => {
+    const peer = new Peer(PREFIX + code, peerOpts()); NET.peer = peer; NET.role = "host"; NET.pid = 0;
+    const to = setTimeout(() => rej(new Error("timeout")), 12000);
+    peer.on("open", () => { clearTimeout(to); hostInit(name); H.S.code = code; res(code); });
+    peer.on("error", e => { clearTimeout(to); rej(e); });
+    peer.on("connection", conn => {
+      conn.on("data", m => {
+        if (m.t === "join"){
+          const S = H.S;
+          if (S.phase !== "lobby" || S.players.length >= 3){ conn.send({ t:"full" }); return; }
+          const pid = S.players.length; S.players.push({ name: String(m.name || "Játékos").slice(0, 18), bot:false });
+          H.conns[pid] = conn; conn.pid = pid; conn.send({ t:"welcome", pid }); push();
+        } else if (m.t === "act" && conn.pid != null) hostAct(conn.pid, m.a);
+      });
+      conn.on("close", () => {
+        const pid = conn.pid; if (pid == null) return;
+        delete H.conns[pid];
+        const S = H.S;
+        if (S.phase === "lobby"){ S.players.splice(pid, 1); reindex(); }
+        else { S.players[pid].bot = true; S.players[pid].name += " (bot)"; log(S.players[pid].name + " kilépett — bot veszi át"); }
+        push();
+      });
+    });
+  });
+}
+function reindex(){ const c = {}; Object.values(H.conns).forEach((conn, i) => { conn.pid = i + 1; c[i + 1] = conn; conn.send({ t:"welcome", pid:i + 1 }); }); H.conns = c; }
+async function joinOnline(code, name){
+  await loadPeer();
+  return new Promise((res, rej) => {
+    const peer = new Peer(undefined, peerOpts()); NET.peer = peer; NET.role = "client";
+    const to = setTimeout(() => rej(new Error("timeout")), 12000);
+    peer.on("error", e => { clearTimeout(to); rej(e); });
+    peer.on("open", () => {
+      const conn = peer.connect(PREFIX + code.toUpperCase(), { reliable:true }); NET.conn = conn;
+      conn.on("open", () => conn.send({ t:"join", name }));
+      conn.on("data", m => {
+        if (m.t === "welcome"){ clearTimeout(to); NET.pid = m.pid; res(); }
+        else if (m.t === "full"){ clearTimeout(to); rej(new Error("full")); }
+        else if (m.t === "state") onState(m.s, m.left);
+      });
+      conn.on("close", () => { UI.lost = true; draw(); });
+    });
+  });
+}
+function act(a){ if (NET.role === "client") NET.conn && NET.conn.send({ t:"act", a }); else hostAct(NET.pid, a); }
+
+/* ---------- UI ---------- */
+const UI = { S:null, dl:0, mine:null, seq:-1, screen:"home", lost:false, err:"" };
+function onState(S, left){
+  if (S.seq !== UI.seq){ if (S.phase === "q" || S.phase === "tip") { UI.mine = null; UI.tipSent = false; } UI.seq = S.seq; }
+  UI.S = S; UI.dl = left ? Date.now() + left : 0; UI.screen = S.phase === "lobby" ? "lobby" : "game";
+  draw();
+}
+function home(){
+  const room = new URLSearchParams(location.search).get("room") || "";
+  let nm = ""; try { nm = localStorage.getItem("af-name") || ""; } catch(e){}
+  $("#app").innerHTML = `
+  <h1>Áram<span>foglaló</span></h1>
+  <p class="sub">Honfoglaló-szerű kvízcsata a Challenge.ON döntő kérdéseiből. 3 játékos, vár, terjeszkedés, háború.</p>
+  <div class="field" style="max-width:340px;margin-top:18px"><label for="nm">A neved</label><input type="text" id="nm" maxlength="18" value="${esc(nm)}" placeholder="pl. Márk"></div>
+  <div class="home">
+    <div class="panel"><h2>Online szoba</h2><p>Hozz létre egy szobát, és küldd el a kódot vagy a linket a csapattársaidnak. Az üres helyeket botok töltik ki.</p>
+      <button class="btn pri" id="bHost">Szoba létrehozása</button></div>
+    <div class="panel"><h2>Csatlakozás</h2><p>Írd be a 4 betűs szobakódot.</p>
+      <div class="row"><input type="text" id="code" maxlength="4" value="${esc(room)}" placeholder="KÓD" style="max-width:130px;text-transform:uppercase;font-family:var(--mono);letter-spacing:.15em"><button class="btn pri" id="bJoin">Belépés</button></div></div>
+    <div class="panel" style="grid-column:1/-1"><h2>Gyakorlás botok ellen</h2><p>Egyedül, internet nélkül: te és két bot.</p><button class="btn" id="bSolo">Indítás</button></div>
+  </div>
+  <div class="err" id="err">${esc(UI.err)}</div>
+  <div class="rules"><b>Szabályok röviden.</b> <b>1. Terjeszkedés (3 kör):</b> sorban mindenki kijelöl egy szabad, szomszédos mezőt, majd jön egy 4 válaszos kérdés — aki jól felel, megkapja a kijelölt mezőt (200 pont). A maradék mezőkről tippkérdések döntenek: aki legközelebb tippel, választ. <b>2. Háború (3 kör):</b> mindenki sorban megtámad egy szomszédos ellenséges mezőt. Ha csak a támadó felel jól, elfoglalja (400 pont); ha a védő is jól felel, tippkérdés dönt; ha a támadó hibázik, a védő +100 pontot kap. A vár 1000 pontot ér és 3 bástyája van — ha mindhárom ledől, a vár ura kiesik, és minden területe a támadóé lesz. A végén a legtöbb pont nyer.</div>`;
+  const nmv = () => { const v = $("#nm").value.trim() || "Játékos"; try { localStorage.setItem("af-name", v); } catch(e){} return v; };
+  const fail = e => { UI.err = e && e.message === "full" ? "A szoba megtelt vagy már elindult." : e && e.message === "load" ? "Nem sikerült betölteni az online modult. Próbáld a GitHub-os változatot, vagy játssz botok ellen." : "Nem sikerült kapcsolódni" + (e && e.type ? " (" + e.type + ")" : "") + ". Ellenőrizd a kódot és a netet."; $("#err").textContent = UI.err; };
+  $("#bSolo").onclick = () => { NET.role = "solo"; NET.pid = 0; hostInit(nmv()); hostStart(); };
+  $("#bHost").onclick = async e => { e.target.disabled = true; e.target.textContent = "Kapcsolódás…"; try { await hostOnline(nmv()); push(); } catch(err){ fail(err); e.target.disabled = false; e.target.textContent = "Szoba létrehozása"; } };
+  $("#bJoin").onclick = async e => { const c = $("#code").value.trim().toUpperCase(); if (c.length !== 4){ $("#err").textContent = "4 betűs kód kell."; return; } e.target.disabled = true; e.target.textContent = "…"; try { await joinOnline(c, nmv()); } catch(err){ fail(err); e.target.disabled = false; e.target.textContent = "Belépés"; } };
+}
+function lobby(){
+  const S = UI.S, isHost = NET.role === "host";
+  const link = location.origin + location.pathname + "?room=" + S.code + (new URLSearchParams(location.search).get("peer") ? "&peer=" + new URLSearchParams(location.search).get("peer") : "");
+  $("#app").innerHTML = `<h1>Áram<span>foglaló</span></h1>
+  <div class="panel" style="max-width:520px;margin-top:20px">
+    <div style="font-size:13px;color:var(--muted);font-weight:600">SZOBAKÓD</div>
+    <div class="code" id="code">${esc(S.code || "")}</div>
+    ${isHost ? `<div class="row" style="margin:12px 0"><button class="btn" id="cp">Link másolása</button><span class="note" id="cpn" style="margin:0"></span></div>` : ""}
+    <ul class="plist">${[0,1,2].map(i => { const p = S.players[i]; return `<li><span class="dot" style="background:${PCOL[i]}"></span>${p ? esc(p.name) + (i === NET.pid ? '<span class="badge">te</span>' : '') + (i === 0 ? '<span class="badge">házigazda</span>' : '') : '<span style="color:var(--muted)">üres hely — bot lesz</span>'}</li>`; }).join("")}</ul>
+    ${isHost ? `<button class="btn pri" id="go">Játék indítása</button>` : `<p class="note">Várunk, hogy a házigazda elindítsa a játékot…</p>`}
+  </div>`;
+  if (isHost){
+    $("#go").onclick = () => hostStart();
+    $("#cp").onclick = async () => { try { await navigator.clipboard.writeText(link); $("#cpn").textContent = "Másolva!"; } catch(e){ $("#cpn").textContent = link; } };
+  }
+}
+const PH = { exp_pick:"Terjeszkedés", tip_pick:"Terjeszkedés", q:"Kérdés", q_res:"Eredmény", tip:"Tippkérdés", tip_res:"Tipp eredménye", bat_pick:"Háború", bat_res:"Csata eredménye", end:"Vége" };
+function draw(){
+  if (UI.screen === "home") return home();
+  if (UI.screen === "lobby") return lobby();
+  const S = UI.S, me = NET.pid;
+  const war = S.phase.startsWith("bat") || (S.ctx === "bat" && ["q","q_res","tip","tip_res"].includes(S.phase));
+  const top = S.players.map((p, i) => `<div class="pc${S.cur === i && /pick/.test(S.phase) ? " cur" : ""}${p.out ? " dead" : ""}" style="--c:${PCOL[i]}">
+    <div class="nm">${esc(p.name)}${i === me ? '<span class="badge">te</span>' : ''}</div>
+    <div class="sc">${score(S, i)}</div>
+    <div class="meta">${p.out ? "kiesett" : "♜".repeat(S.tiles[CASTLES[i]].owner === i ? S.tiles[CASTLES[i]].towers : 0) + " · " + myTiles(S, i).length + '<span class="mz"> mező</span>'}</div></div>`).join("");
+  let title = (war ? "Háború" : "Terjeszkedés") + " · " + S.round + ". kör";
+  if (S.phase === "end") title = "Vége a játéknak";
+  $("#app").innerHTML = `<div class="top">${top}</div>
+    <div class="status"><div class="ph">${title}</div><div class="cd" id="cd"></div></div>
+    ${UI.lost ? '<div class="panel" style="margin-bottom:12px;color:var(--bad)">Megszakadt a kapcsolat a házigazdával.</div>' : ''}
+    <div class="gamegrid"><div class="mapbox">${mapSVG(S, me)}</div><div class="panel" id="side">${side(S, me)}</div></div>`;
+  wire(S, me); tick();
+}
+function mapSVG(S, me){
+  const myPick = S.cur === me && ["exp_pick","tip_pick"].includes(S.phase) ? validPicks(S, me) : S.cur === me && S.phase === "bat_pick" ? validTargets(S, me) : [];
+  let g = "";
+  TILES.forEach(t => {
+    const st = S.tiles[t.id], own = st.owner;
+    const fill = own === null ? "var(--free)" : PCOL[own];
+    const op = own === null ? 1 : st.value >= 1000 ? 1 : st.value >= 400 ? .92 : .72;
+    const cl = myPick.includes(t.id);
+    g += `<g class="${own !== null ? "owned" : ""}"><polygon class="hex${cl ? " click" : ""}" data-t="${t.id}" points="${hexPts(t.x, t.y)}" fill="${fill}" fill-opacity="${op}"/>`;
+    if (cl) g += `<polygon class="hl" points="${hexPts(t.x, t.y)}"/>`;
+    if (S.picks && Object.values(S.picks).includes(t.id)){ const pp = +Object.keys(S.picks).find(k => S.picks[k] === t.id); g += `<polygon class="pend" stroke="${PCOL[pp]}" points="${hexPts(t.x, t.y)}"/>`; }
+    if (S.att && S.att.tile === t.id) g += `<polygon class="target" points="${hexPts(t.x, t.y)}"/>`;
+    const castle = CASTLES.includes(t.id) && st.value === 1000;
+    g += `<text class="tl" x="${t.x}" y="${t.y - (castle ? 12 : 4)}">${esc(t.name)}</text>`;
+    if (castle) g += `<text class="tv" x="${t.x}" y="${t.y + 8}">${"♜".repeat(st.towers) || "🏳"}</text><text class="tl" x="${t.x}" y="${t.y + 24}">1000</text>`;
+    else if (own !== null) g += `<text class="tv" x="${t.x}" y="${t.y + 14}">${st.value}</text>`;
+    g += `</g>`;
+  });
+  return `<svg class="map" viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Térkép">${g}</svg>`;
+}
+function whoDots(S, list){ return list.map(p => `<i style="background:${PCOL[p]}"></i>`).join(""); }
+function side(S, me){
+  const P = i => `<b style="color:${PCOL[i]}">${esc(S.players[i].name)}</b>`;
+  const ph = S.phase;
+  if (ph === "end"){
+    return `<div class="tagl">Végeredmény</div><ul class="res">${S.final.map((p, i) => `<li class="${i === 0 ? "win" : ""}"><span class="dot" style="background:${PCOL[p]}"></span>${i + 1}. ${esc(S.players[p].name)}${S.players[p].out ? " (kiesett)" : ""}<span class="v">${score(S, p)}</span></li>`).join("")}</ul>
+      <div class="big" style="margin-top:14px">${esc(S.players[S.final[0]].name)} nyert!</div>
+      ${NET.role !== "client" ? '<div class="row" style="margin-top:12px"><button class="btn pri" id="again">Új játék</button></div>' : '<p class="note">A házigazda indíthat új játékot.</p>'}${logHTML(S)}`;
+  }
+  if (/pick/.test(ph)){
+    const mine = S.cur === me;
+    const what = ph === "bat_pick" ? "támad" : "választ mezőt";
+    return `<div class="tagl">${ph === "bat_pick" ? "Támadás" : ph === "tip_pick" ? "A tipp nyertese választ" : "Mezőválasztás"}</div>
+      <p class="q">${mine ? (ph === "bat_pick" ? "Válaszd ki, melyik ellenséges mezőt támadod!" : "Válassz egy szabad mezőt a térképen!") : P(S.cur) + " " + what + "…"}</p>
+      ${mine ? '<p class="note">A kijelölhető mezők szaggatott kerettel látszanak.' + (ph === "bat_pick" ? " Egy vár 3 sikeres ostrom után esik el." : "") + '</p>' : ''}
+      ${ph === "bat_res" ? "" : ""}${logHTML(S)}`;
+  }
+  if (ph === "bat_res"){
+    const a = S.att;
+    return `<div class="tagl">Csata</div><p class="q">${a.win === "a" ? P(a.a) + " győzött!" : P(a.d) + " megvédte a területét!"}</p>${logHTML(S)}`;
+  }
+  if (ph === "q" || ph === "q_res"){
+    const need = S.need.includes(me), done = ph === "q_res", R = S.reveal;
+    const ctxLine = S.ctx === "bat" ? `${P(S.att.a)} támad, ${P(S.att.d)} véd` : "Aki jól felel, megkapja a kijelölt mezőjét";
+    let h = `<div class="tagl">${esc(S.q.id)} · ${S.ctx === "bat" ? "Csatakérdés" : "Terjeszkedés"}</div><div class="note" style="margin:0 0 8px">${ctxLine}</div><p class="q">${esc(S.q.text)}</p>
+      <div class="opts${done ? " done" : ""}">`;
+    S.q.opts.forEach((o, i) => {
+      const who = done ? Object.keys(R.ans).filter(p => R.ans[p].c === i).map(Number) : [];
+      h += `<button class="opt o${i}${UI.mine === i ? " mine" : ""}${done && R.correct === i ? " right" : ""}" data-c="${i}" ${!need || done || UI.mine !== null ? "disabled" : ""}><span class="sh">${"ABCD"[i]}</span><span>${esc(o)}</span><span class="who">${whoDots(S, who)}</span></button>`;
+    });
+    h += `</div>`;
+    if (!done) h += `<p class="note">${need ? (UI.mine !== null ? "Válasz elküldve, várjuk a többieket…" : "") : "Most csak nézed — ebben a kérdésben nem te játszol."} Válaszolt: ${S.need.filter(p => S.answered[p]).map(p => esc(S.players[p].name)).join(", ") || "még senki"}</p>`;
+    else h += `<ul class="res">${S.need.map(p => `<li><span class="dot" style="background:${PCOL[p]}"></span>${esc(S.players[p].name)}<span class="v">${R.ok[p] ? "✓ jó" : R.ans[p] ? "✗ rossz" : "— nem felelt"}</span></li>`).join("")}</ul><div class="expl">${esc(S.q.expl)}</div>`;
+    return h + logHTML(S);
+  }
+  if (ph === "tip" || ph === "tip_res"){
+    const need = S.need.includes(me), R = S.reveal;
+    let h = `<div class="tagl">Tippkérdés${S.ctx === "bat" ? " · döntetlen a csatában" : " · a legközelebbi választ mezőt"}</div><p class="q">${esc(S.q.text)}</p>`;
+    if (ph === "tip"){
+      if (need && !UI.tipSent) h += `<form id="tipf" class="row"><input type="number" step="any" id="tipv" inputmode="decimal" placeholder="Tipp (${esc(S.q.unit)})" style="max-width:220px" autocomplete="off"><button class="btn pri">Küldés</button></form>`;
+      h += `<p class="note">${need ? (UI.tipSent ? "Tipp elküldve…" : "Minél közelebb, annál jobb. Egyenlőségnél a gyorsabb nyer.") : "Most csak nézed."} Tippelt: ${S.need.filter(p => S.answered[p]).map(p => esc(S.players[p].name)).join(", ") || "még senki"}</p>`;
+    } else {
+      h += `<div class="big">${fmt(R.v)} <span style="font-size:18px">${esc(S.q.unit)}</span></div><ul class="res">${R.rank.map((p, i) => `<li class="${i === 0 ? "win" : ""}"><span class="dot" style="background:${PCOL[p]}"></span>${esc(S.players[p].name)}<span class="v">${R.ans[p] ? fmt(R.ans[p].v) + " · " + (R.ans[p].t / 1000).toFixed(1) + " s" : "—"}</span></li>`).join("")}</ul>`;
+    }
+    return h + logHTML(S);
+  }
+  return logHTML(S);
+}
+function logHTML(S){ return `<div class="log">${S.log.slice(0, 8).map(l => `<div>${esc(l)}</div>`).join("")}</div>`; }
+function wire(S, me){
+  document.querySelectorAll(".hex.click").forEach(el => el.onclick = () => act({ type:"pick", tile:+el.dataset.t }));
+  document.querySelectorAll(".opt:not([disabled])").forEach(el => el.onclick = () => { UI.mine = +el.dataset.c; act({ type:"ans", c:UI.mine }); draw(); });
+  const f = $("#tipf"); if (f){ const i = $("#tipv"); i.focus({ preventScroll:true }); f.onsubmit = e => { e.preventDefault(); const v = parseFloat(String(i.value).replace(",", ".")); if (!isFinite(v)) return; UI.tipSent = true; act({ type:"tip", v }); draw(); }; }
+  const ag = $("#again"); if (ag) ag.onclick = () => {
+    if (NET.role === "solo"){ hostInit(H.S.players[0].name); hostStart(); return; }
+    const S = H.S, ps = [{ name:S.players[0].name, bot:false }], nc = {};
+    for (const k in H.conns){ const i = ps.length; ps.push({ name:S.players[k].name, bot:false }); nc[i] = H.conns[k]; nc[i].pid = i; try { nc[i].send({ t:"welcome", pid:i }); } catch(e){} }
+    H.conns = nc; S.players = ps; S.tiles = []; S.picks = {}; S.log = []; S.att = null; S.q = null;
+    setPhase("lobby", 0); push();
+  };
+}
+function tick(){
+  const el = $("#cd"); if (!el) return;
+  if (!UI.dl){ el.textContent = ""; return; }
+  const s = Math.max(0, Math.ceil((UI.dl - Date.now()) / 1000));
+  el.textContent = s ? s + " s" : ""; el.classList.toggle("low", s <= 5);
+}
+setInterval(tick, 250);
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const S = UI.S; if (!S || S.phase !== "q" || UI.mine !== null || !S.need.includes(NET.pid)) return;
+  if (["1","2","3","4"].includes(e.key)){ UI.mine = +e.key - 1; act({ type:"ans", c:UI.mine }); draw(); }
+});
+draw();
+</script>
+</body>
+</html>
