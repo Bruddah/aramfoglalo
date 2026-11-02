@@ -168,7 +168,7 @@ function setPhase(ph, ms, fn){
 function push(){
   const S = H.S;
   const msg = { t:"state", s:S, left: S.dl ? S.dl - Date.now() : 0 };
-  for (const pid in H.conns){ try { H.conns[pid].send(msg); } catch(e){} }
+  if (NET.role === "host") pub(NET.T + "/s", msg, true);
   onState(JSON.parse(JSON.stringify(S)), msg.left);
   bots();
 }
@@ -367,76 +367,94 @@ function bots(){
   });
 }
 
-/* ---------- network (PeerJS) ---------- */
-const NET = { peer:null, conn:null, role:null, pid:null };
-const PREFIX = "aramfoglalo26-";
-function peerOpts(){
-  const u = new URLSearchParams(location.search).get("peer");
-  if (!u) return { debug:0 };
-  const [host, port] = u.split(":");
-  return { host, port:+port || 9000, path:"/", secure:false, debug:0 };
-}
-function loadPeer(){
+/* ---------- network (MQTT relay over WebSocket) ---------- */
+const NET = { mq:null, role:null, pid:null, cid:null, T:null };
+const QS = new URLSearchParams(location.search);
+const BROKERS = QS.get("broker") ? [QS.get("broker")] : ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt"];
+function loadMqtt(){
   return new Promise((res, rej) => {
-    if (window.Peer) return res();
+    if (window.mqtt) return res();
     const s = document.createElement("script");
-    s.src = new URLSearchParams(location.search).get("peerlib") || "https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js";
+    s.src = QS.get("mqttlib") || "https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js";
     s.onload = res; s.onerror = () => rej(new Error("load"));
     document.head.appendChild(s);
   });
 }
 function code4(){ const A = "ABCDEFGHJKLMNPQRSTUVWXYZ"; let s = ""; for (let i = 0; i < 4; i++) s += A[Math.floor(Math.random() * A.length)]; return s; }
+function topic(code){ return "aramfoglalo26/v2/" + code; }
+async function mqConnect(will){
+  await loadMqtt();
+  NET.cid = NET.cid || ("af" + Math.random().toString(36).slice(2, 10));
+  let lastErr = new Error("timeout");
+  for (const url of BROKERS){
+    try {
+      const c = await new Promise((res, rej) => {
+        const cl = mqtt.connect(url, { clientId: NET.cid, clean:true, reconnectPeriod:2000, connectTimeout:8000, keepalive:20, will });
+        const to = setTimeout(() => { cl.end(true); rej(new Error("timeout")); }, 9000);
+        cl.once("connect", () => { clearTimeout(to); res(cl); });
+        cl.once("error", e => { clearTimeout(to); cl.end(true); rej(e); });
+      });
+      c.on("offline", () => { UI.net = "offline"; draw(); });
+      c.on("connect", () => { if (UI.net){ UI.net = ""; draw(); } });
+      return c;
+    } catch(e){ lastErr = e; }
+  }
+  throw lastErr;
+}
+function pub(t, m, retain){ if (NET.mq) NET.mq.publish(t, JSON.stringify(m), { qos:1, retain: !!retain }); }
+function mkConn(cid){ return { cid, send: m => pub(NET.T + "/to/" + cid, m) }; }
 async function hostOnline(name){
-  await loadPeer();
-  const code = code4();
-  return new Promise((res, rej) => {
-    const peer = new Peer(PREFIX + code, peerOpts()); NET.peer = peer; NET.role = "host"; NET.pid = 0;
-    const to = setTimeout(() => rej(new Error("timeout")), 12000);
-    peer.on("open", () => { clearTimeout(to); hostInit(name); H.S.code = code; res(code); });
-    peer.on("error", e => { clearTimeout(to); rej(e); });
-    peer.on("connection", conn => {
-      conn.on("data", m => {
-        if (m.t === "join"){
-          const S = H.S;
-          if (S.phase !== "lobby" || S.players.length >= 3){ conn.send({ t:"full" }); return; }
-          const pid = S.players.length; S.players.push({ name: String(m.name || "Játékos").slice(0, 18), bot:false });
-          H.conns[pid] = conn; conn.pid = pid; conn.send({ t:"welcome", pid }); push();
-        } else if (m.t === "act" && conn.pid != null) hostAct(conn.pid, m.a);
-      });
-      conn.on("close", () => {
-        const pid = conn.pid; if (pid == null) return;
-        delete H.conns[pid];
-        const S = H.S;
-        if (S.phase === "lobby"){ S.players.splice(pid, 1); reindex(); }
-        else { S.players[pid].bot = true; S.players[pid].name += " (bot)"; log(S.players[pid].name + " kilépett — bot veszi át"); }
-        push();
-      });
-    });
+  const code = code4(); NET.T = topic(code);
+  const c = await mqConnect(); NET.mq = c; NET.role = "host"; NET.pid = 0;
+  hostInit(name); H.S.code = code;
+  c.subscribe(NET.T + "/c", { qos:1 });
+  c.on("message", (t, buf) => {
+    let m; try { m = JSON.parse(buf.toString()); } catch(e){ return; }
+    const S = H.S; if (!m || !m.cid) return;
+    const pid = +Object.keys(H.conns).find(k => H.conns[k].cid === m.cid);
+    const known = !isNaN(pid);
+    if (m.t === "join"){
+      if (known){
+        const p = S.players[pid];
+        if (p && p.bot && p.nm0){ p.bot = false; p.name = p.nm0; log(p.name + " visszatért"); }
+        H.conns[pid].send({ t:"welcome", pid }); push(); return;
+      }
+      if (S.phase !== "lobby" || S.players.length >= 3){ mkConn(m.cid).send({ t:"full" }); return; }
+      const np = S.players.length; S.players.push({ name: String(m.name || "Játékos").slice(0, 18), bot:false });
+      H.conns[np] = mkConn(m.cid); H.conns[np].send({ t:"welcome", pid:np }); push();
+    } else if (m.t === "act" && known) hostAct(pid, m.a);
+    else if (m.t === "leave" && known){
+      const p = S.players[pid];
+      if (S.phase === "lobby"){ delete H.conns[pid]; S.players.splice(pid, 1); reindex(); }
+      else if (p && !p.bot){ p.nm0 = p.name; p.bot = true; p.name += " (bot)"; log(p.nm0 + " kilépett — bot veszi át"); }
+      push();
+    }
   });
+  return code;
 }
-function reindex(){ const c = {}; Object.values(H.conns).forEach((conn, i) => { conn.pid = i + 1; c[i + 1] = conn; conn.send({ t:"welcome", pid:i + 1 }); }); H.conns = c; }
+function reindex(){ const c = {}; Object.values(H.conns).forEach((conn, i) => { c[i + 1] = conn; conn.send({ t:"welcome", pid:i + 1 }); }); H.conns = c; }
 async function joinOnline(code, name){
-  await loadPeer();
+  code = code.toUpperCase(); NET.T = topic(code); NET.role = "client";
+  NET.cid = NET.cid || ("af" + Math.random().toString(36).slice(2, 10));
+  const c = await mqConnect({ topic: NET.T + "/c", payload: JSON.stringify({ t:"leave", cid: NET.cid }), qos:1, retain:false });
+  NET.mq = c;
   return new Promise((res, rej) => {
-    const peer = new Peer(undefined, peerOpts()); NET.peer = peer; NET.role = "client";
-    const to = setTimeout(() => rej(new Error("timeout")), 12000);
-    peer.on("error", e => { clearTimeout(to); rej(e); });
-    peer.on("open", () => {
-      const conn = peer.connect(PREFIX + code.toUpperCase(), { reliable:true }); NET.conn = conn;
-      conn.on("open", () => conn.send({ t:"join", name }));
-      conn.on("data", m => {
-        if (m.t === "welcome"){ clearTimeout(to); NET.pid = m.pid; res(); }
-        else if (m.t === "full"){ clearTimeout(to); rej(new Error("full")); }
-        else if (m.t === "state") onState(m.s, m.left);
-      });
-      conn.on("close", () => { UI.lost = true; draw(); });
+    let done = false;
+    const to = setTimeout(() => { if (!done){ c.end(true); NET.mq = null; rej(new Error("noroom")); } }, 10000);
+    c.subscribe([NET.T + "/s", NET.T + "/to/" + NET.cid], { qos:1 }, () => pub(NET.T + "/c", { t:"join", cid: NET.cid, name }));
+    c.on("connect", () => { if (done) pub(NET.T + "/c", { t:"join", cid: NET.cid, name }); });
+    c.on("message", (t, buf) => {
+      let m; try { m = JSON.parse(buf.toString()); } catch(e){ return; }
+      if (m.t === "welcome"){ NET.pid = m.pid; if (!done){ done = true; clearTimeout(to); res(); } if (UI.S) draw(); }
+      else if (m.t === "full"){ if (!done){ done = true; clearTimeout(to); c.end(true); rej(new Error("full")); } }
+      else if (m.t === "state" && done && m.s && m.s.code === code) onState(m.s, m.left);
     });
   });
 }
-function act(a){ if (NET.role === "client") NET.conn && NET.conn.send({ t:"act", a }); else hostAct(NET.pid, a); }
+function act(a){ if (NET.role === "client") pub(NET.T + "/c", { t:"act", cid: NET.cid, a }); else hostAct(NET.pid, a); }
 
 /* ---------- UI ---------- */
-const UI = { S:null, dl:0, mine:null, seq:-1, screen:"home", lost:false, err:"" };
+const UI = { S:null, dl:0, mine:null, seq:-1, screen:"home", net:"", err:"" };
 function onState(S, left){
   if (S.seq !== UI.seq){ if (S.phase === "q" || S.phase === "tip") { UI.mine = null; UI.tipSent = false; } UI.seq = S.seq; }
   UI.S = S; UI.dl = left ? Date.now() + left : 0; UI.screen = S.phase === "lobby" ? "lobby" : "game";
@@ -459,21 +477,21 @@ function home(){
   <div class="err" id="err">${esc(UI.err)}</div>
   <div class="rules"><b>Szabályok röviden.</b> <b>1. Terjeszkedés (3 kör):</b> sorban mindenki kijelöl egy szabad, szomszédos mezőt, majd jön egy 4 válaszos kérdés — aki jól felel, megkapja a kijelölt mezőt (200 pont). A maradék mezőkről tippkérdések döntenek: aki legközelebb tippel, választ. <b>2. Háború (3 kör):</b> mindenki sorban megtámad egy szomszédos ellenséges mezőt. Ha csak a támadó felel jól, elfoglalja (400 pont); ha a védő is jól felel, tippkérdés dönt; ha a támadó hibázik, a védő +100 pontot kap. A vár 1000 pontot ér és 3 bástyája van — ha mindhárom ledől, a vár ura kiesik, és minden területe a támadóé lesz. A végén a legtöbb pont nyer.</div>`;
   const nmv = () => { const v = $("#nm").value.trim() || "Játékos"; try { localStorage.setItem("af-name", v); } catch(e){} return v; };
-  const fail = e => { UI.err = e && e.message === "full" ? "A szoba megtelt vagy már elindult." : e && e.message === "load" ? "Nem sikerült betölteni az online modult. Próbáld a GitHub-os változatot, vagy játssz botok ellen." : "Nem sikerült kapcsolódni" + (e && e.type ? " (" + e.type + ")" : "") + ". Ellenőrizd a kódot és a netet."; $("#err").textContent = UI.err; };
+  const fail = e => { UI.err = e && e.message === "full" ? "A szoba megtelt vagy már elindult." : e && e.message === "load" ? "Nem sikerült betölteni az online modult. Próbáld a GitHub-os változatot, vagy játssz botok ellen." : e && e.message === "noroom" ? "Nincs ilyen szoba, vagy a házigazda oldala nincs nyitva. Ellenőrizd a kódot." : "Nem sikerült kapcsolódni a szerverhez (" + (e && e.message || "?") + "). Ellenőrizd a netet."; $("#err").textContent = UI.err; };
   $("#bSolo").onclick = () => { NET.role = "solo"; NET.pid = 0; hostInit(nmv()); hostStart(); };
   $("#bHost").onclick = async e => { e.target.disabled = true; e.target.textContent = "Kapcsolódás…"; try { await hostOnline(nmv()); push(); } catch(err){ fail(err); e.target.disabled = false; e.target.textContent = "Szoba létrehozása"; } };
   $("#bJoin").onclick = async e => { const c = $("#code").value.trim().toUpperCase(); if (c.length !== 4){ $("#err").textContent = "4 betűs kód kell."; return; } e.target.disabled = true; e.target.textContent = "…"; try { await joinOnline(c, nmv()); } catch(err){ fail(err); e.target.disabled = false; e.target.textContent = "Belépés"; } };
 }
 function lobby(){
   const S = UI.S, isHost = NET.role === "host";
-  const link = location.origin + location.pathname + "?room=" + S.code + (new URLSearchParams(location.search).get("peer") ? "&peer=" + new URLSearchParams(location.search).get("peer") : "");
+  const link = location.origin + location.pathname + "?room=" + S.code + (QS.get("broker") ? "&broker=" + encodeURIComponent(QS.get("broker")) : "");
   $("#app").innerHTML = `<h1>Áram<span>foglaló</span></h1>
   <div class="panel" style="max-width:520px;margin-top:20px">
     <div style="font-size:13px;color:var(--muted);font-weight:600">SZOBAKÓD</div>
     <div class="code" id="code">${esc(S.code || "")}</div>
     ${isHost ? `<div class="row" style="margin:12px 0"><button class="btn" id="cp">Link másolása</button><span class="note" id="cpn" style="margin:0"></span></div>` : ""}
     <ul class="plist">${[0,1,2].map(i => { const p = S.players[i]; return `<li><span class="dot" style="background:${PCOL[i]}"></span>${p ? esc(p.name) + (i === NET.pid ? '<span class="badge">te</span>' : '') + (i === 0 ? '<span class="badge">házigazda</span>' : '') : '<span style="color:var(--muted)">üres hely — bot lesz</span>'}</li>`; }).join("")}</ul>
-    ${isHost ? `<button class="btn pri" id="go">Játék indítása</button>` : `<p class="note">Várunk, hogy a házigazda elindítsa a játékot…</p>`}
+    ${isHost ? `<p class="note" style="margin:0 0 12px">A játék a te eszközödön fut: tartsd nyitva ezt az oldalt, telefonon ne válts át más appra játék közben.</p><button class="btn pri" id="go">Játék indítása</button>` : `<p class="note">Várunk, hogy a házigazda elindítsa a játékot…</p>`}
   </div>`;
   if (isHost){
     $("#go").onclick = () => hostStart();
@@ -485,6 +503,7 @@ function draw(){
   if (UI.screen === "home") return home();
   if (UI.screen === "lobby") return lobby();
   const S = UI.S, me = NET.pid;
+  const tvEl = $("#tipv"), tvKeep = tvEl ? tvEl.value : null;
   const war = S.phase.startsWith("bat") || (S.ctx === "bat" && ["q","q_res","tip","tip_res"].includes(S.phase));
   const top = S.players.map((p, i) => `<div class="pc${S.cur === i && /pick/.test(S.phase) ? " cur" : ""}${p.out ? " dead" : ""}" style="--c:${PCOL[i]}">
     <div class="nm">${esc(p.name)}${i === me ? '<span class="badge">te</span>' : ''}</div>
@@ -494,9 +513,10 @@ function draw(){
   if (S.phase === "end") title = "Vége a játéknak";
   $("#app").innerHTML = `<div class="top">${top}</div>
     <div class="status"><div class="ph">${title}</div><div class="cd" id="cd"></div></div>
-    ${UI.lost ? '<div class="panel" style="margin-bottom:12px;color:var(--bad)">Megszakadt a kapcsolat a házigazdával.</div>' : ''}
+    ${UI.net ? '<div class="panel" style="margin-bottom:12px;color:var(--bad)">Megszakadt a kapcsolat — újracsatlakozás…</div>' : ''}
     <div class="gamegrid"><div class="mapbox">${mapSVG(S, me)}</div><div class="panel" id="side">${side(S, me)}</div></div>`;
   wire(S, me); tick();
+  if (tvKeep !== null && $("#tipv")) $("#tipv").value = tvKeep;
 }
 function mapSVG(S, me){
   const myPick = S.cur === me && ["exp_pick","tip_pick"].includes(S.phase) ? validPicks(S, me) : S.cur === me && S.phase === "bat_pick" ? validTargets(S, me) : [];
@@ -574,7 +594,7 @@ function wire(S, me){
   const ag = $("#again"); if (ag) ag.onclick = () => {
     if (NET.role === "solo"){ hostInit(H.S.players[0].name); hostStart(); return; }
     const S = H.S, ps = [{ name:S.players[0].name, bot:false }], nc = {};
-    for (const k in H.conns){ const i = ps.length; ps.push({ name:S.players[k].name, bot:false }); nc[i] = H.conns[k]; nc[i].pid = i; try { nc[i].send({ t:"welcome", pid:i }); } catch(e){} }
+    for (const k in H.conns){ if (S.players[k].bot) continue; const i = ps.length; ps.push({ name:S.players[k].name, bot:false }); nc[i] = H.conns[k]; nc[i].send({ t:"welcome", pid:i }); }
     H.conns = nc; S.players = ps; S.tiles = []; S.picks = {}; S.log = []; S.att = null; S.q = null;
     setPhase("lobby", 0); push();
   };
